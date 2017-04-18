@@ -25,7 +25,7 @@ class AdminTestCase(TestCase):
     def test_has_add_permission(self):
         self.client.login(username=self.user, password=self.user_password)
 
-        url = reverse('admin:email_extras_address_changelist')
+        url = reverse('admin:secure_mail_address_changelist')
         response = self.client.get(url)
 
         self.assertFalse(response.context['has_add_permission'])

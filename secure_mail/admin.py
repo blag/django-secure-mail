@@ -1,11 +1,11 @@
-from email_extras.settings import USE_GNUPG
+from secure_mail.settings import USE_GNUPG
 
 
 if USE_GNUPG:
     from django.contrib import admin
 
-    from email_extras.models import Key, Address
-    from email_extras.forms import KeyForm
+    from secure_mail.models import Key, Address
+    from secure_mail.forms import KeyForm
 
     class KeyAdmin(admin.ModelAdmin):
         form = KeyForm

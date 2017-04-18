@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from email_extras.models import Address, Key
+from secure_mail.models import Address, Key
 
 from tests.utils import (
     TEST_KEY_FINGERPRINT, TEST_PUBLIC_KEY, GPGMixin,
@@ -13,7 +13,7 @@ class ModelFunctionTestCase(GPGMixin, TestCase):
     # * Implement queryset functions (create, update, delete)
     # * Implement tests for queryset functions
     # * Refactor functionality in the models' .save() function into signal
-    #   handlers and connect them up in email_extras/apps.py
+    #   handlers and connect them up in secure_mail/apps.py
     #
     # Once we implement that this will get "filled in" a bit more
     #
@@ -26,14 +26,14 @@ class ModelFunctionTestCase(GPGMixin, TestCase):
 
         # Test Key.email_addresses property
         self.assertEquals(key.email_addresses,
-                          'django-email-extras@example.com')
+                          'django-secure-mail@example.com')
 
         address = Address.objects.get(key=key)
 
         # Test Address.__str__()
-        self.assertEquals(str(address), 'django-email-extras@example.com')
+        self.assertEquals(str(address), 'django-secure-mail@example.com')
 
-        self.assertEquals(address.address, 'django-email-extras@example.com')
+        self.assertEquals(address.address, 'django-secure-mail@example.com')
 
         fp = key.fingerprint
         self.assertEquals(fp, TEST_KEY_FINGERPRINT)

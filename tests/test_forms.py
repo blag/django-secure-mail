@@ -1,7 +1,7 @@
 from django.forms import forms
 from django.test import TestCase
 
-from email_extras.forms import KeyForm
+from secure_mail.forms import KeyForm
 
 from tests.utils import (
     TEST_PUBLIC_KEY, TEST_KEY_FINGERPRINT, GPGMixin

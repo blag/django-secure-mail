@@ -2,7 +2,7 @@ from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.test import TestCase
 
-from email_extras.handlers import (
+from secure_mail.handlers import (
     force_delete_key, force_mail_admins, force_send_message,
     get_variable_from_exception,
 )
@@ -107,7 +107,7 @@ class ForceMailAdminsTestCase(TestCase):
             # nonlocal sent
             sent['sent'] = True
 
-        from email_extras import handlers
+        from secure_mail import handlers
         previous_mail_admins = handlers.mail_admins
         handlers.mail_admins = fake_mail_admins
 

@@ -1,11 +1,11 @@
-
 from __future__ import unicode_literals
+
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
-from email_extras.settings import USE_GNUPG
-from email_extras.utils import addresses_for_key, get_gpg
+from secure_mail.settings import USE_GNUPG
+from secure_mail.utils import addresses_for_key, get_gpg
 
 
 if USE_GNUPG:
@@ -64,7 +64,7 @@ if USE_GNUPG:
             verbose_name_plural = _("Addresses")
 
         address = models.EmailField(blank=True)
-        key = models.ForeignKey('email_extras.Key', null=True, editable=False)
+        key = models.ForeignKey('secure_mail.Key', null=True, editable=False)
         use_asc = models.BooleanField(default=False, editable=False)
 
         def __str__(self):

@@ -9,7 +9,7 @@ from unittest import skipIf
 from django.core.management import call_command, CommandError
 from django.test import TestCase
 
-from email_extras.models import Key
+from secure_mail.models import Key
 
 from tests.utils import TEST_KEY_FINGERPRINT
 
@@ -104,7 +104,7 @@ class TestEmailSigningKeyCommandTestCase(TestCase):
         upload_out = StringIO()
         upload_err = StringIO()
 
-        from email_extras.management.commands import email_signing_key
+        from secure_mail.management.commands import email_signing_key
         previous_value = email_signing_key.upload_keys
         email_signing_key.upload_keys = fake_upload_keys
 

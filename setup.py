@@ -1,4 +1,3 @@
-
 import sys
 from shutil import rmtree
 from setuptools import setup, find_packages
@@ -16,15 +15,15 @@ if sys.argv[:2] == ["setup.py", "bdist_wheel"]:
 
 
 setup(
-    name="django-email-extras",
-    version=__import__("email_extras").__version__,
-    author="Stephen McDonald",
-    author_email="steve@jupo.org",
+    name="django-secure-mail",
+    version=__import__("secure_mail").__version__,
+    author="blag",
+    author_email="blag@users.noreply.github.com",
     description="A Django reusable app providing the ability to send PGP "
                 "encrypted and multipart emails using the Django templating "
                 "system.",
     long_description=open("README.rst").read(),
-    url="https://github.com/stephenmcd/django-email-extras",
+    url="https://github.com/blag/django-secure-mail",
     packages=find_packages(),
     zip_safe=False,
     include_package_data=True,
@@ -42,10 +41,11 @@ setup(
         "Intended Audience :: Developers",
         "Operating System :: OS Independent",
         "Programming Language :: Python",
-        "Programming Language :: Python :: 2.6",
         "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.3",
+        "Programming Language :: Python :: 3.4",
+        "Programming Language :: Python :: 3.5",
+        "Programming Language :: Python :: 3.6",
         "Framework :: Django",
         "Topic :: Communications :: Email",
         "Topic :: Security :: Cryptography",

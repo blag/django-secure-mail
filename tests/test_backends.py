@@ -5,108 +5,13 @@ from django.core import mail
 from django.test import TestCase, override_settings
 from django.utils.safestring import mark_safe
 
-from email_extras.utils import EncryptionFailedError
+from secure_mail.utils import EncryptionFailedError
 
 from tests.utils import (SendMailFunctionMixin, SendMailMixin)
 
 
 @override_settings(
-    EMAIL_BACKEND='email_extras.backends.BrowsableEmailBackend',
-    DEBUG=True)
-class BrowsableEmailBackendTestCase(SendMailFunctionMixin, TestCase):
-    mail_file = 'tests/mail.txt'
-    send_mail_function = 'tests.utils.send_mail_with_backend'
-
-    def _remove_mail_file(self):
-        if os.path.exists(self.mail_file):
-            os.remove(self.mail_file)
-
-    def setUp(self):
-        self._remove_mail_file()
-
-    def tearDown(self):
-        self._remove_mail_file()
-
-    @override_settings(DEBUG=False)
-    def test_with_debug_false(self):
-        msg_subject = "Test Subject"
-        to = ['django-email-extras@example.com']
-        from_email = settings.DEFAULT_FROM_EMAIL
-        msg_text = "Test Body Text"
-        msg_html = "<html><body><b>Hello</b> World <i>Text</i>"
-
-        # Make sure the file doesn't exist yet
-        self.assertFalse(os.path.exists(self.mail_file))
-
-        self.send_mail(
-            msg_subject, msg_text, from_email, to,
-            html_message=mark_safe(msg_html))
-
-        # The backend should bail when DEBUG = False
-        self.assertFalse(os.path.exists(self.mail_file))
-
-    def test_with_txt_mail(self):
-        msg_subject = "Test Subject"
-        to = ['django-email-extras@example.com']
-        from_email = settings.DEFAULT_FROM_EMAIL
-        msg_text = "Test Body Text"
-
-        # Make sure the file doesn't exist yet
-        self.assertFalse(os.path.exists(self.mail_file))
-
-        self.send_mail(
-            msg_subject, msg_text, from_email, to)
-
-        # Since there isn't an HTML alternative, the backend shouldn't fire
-        self.assertFalse(os.path.exists(self.mail_file))
-
-    def test_with_non_html_alternative(self):
-        msg_subject = "Test Subject"
-        to = ['django-email-extras@example.com']
-        from_email = settings.DEFAULT_FROM_EMAIL
-        msg_text = "Test Body Text"
-        msg_html = "<html><body><b>Hello</b> World <i>Text</i>"
-
-        # Make sure the file doesn't exist yet
-        self.assertFalse(os.path.exists(self.mail_file))
-
-        self.send_mail(
-            msg_subject, msg_text, from_email, to,
-            alternatives=[(mark_safe(msg_html), 'application/gpg-encrypted')])
-
-        # The backend should skip any non-HTML alternative
-        self.assertFalse(os.path.exists(self.mail_file))
-
-    def test_with_html_mail(self):
-        msg_subject = "Test Subject"
-        to = ['django-email-extras@example.com']
-        from_email = settings.DEFAULT_FROM_EMAIL
-        msg_text = "Test Body Text"
-        msg_html = "<html><body><b>Hello</b> World <i>Text</i>"
-
-        # Make sure the file doesn't exist yet
-        self.assertFalse(os.path.exists(self.mail_file))
-
-        self.send_mail(
-            msg_subject, msg_text, from_email, to,
-            html_message=mark_safe(msg_html))
-
-        # Make sure the file exists
-        self.assertTrue(os.path.exists(self.mail_file))
-
-        # Make sure the contents are expected
-        with open(self.mail_file, 'r') as f:
-            self.assertEquals(f.read().strip(), msg_html)
-
-        # Try to remove it
-        self._remove_mail_file()
-
-        # Make sure the file doesn't exist
-        self.assertFalse(os.path.exists(self.mail_file))
-
-
-@override_settings(
-    EMAIL_BACKEND='email_extras.backends.EncryptingLocmemEmailBackend')
+    EMAIL_BACKEND='secure_mail.backends.EncryptingLocmemEmailBackend')
 class SendEncryptedMailBackendNoASCTestCase(SendMailMixin, TestCase):
     use_asc = False
     maxDiff = 10000
@@ -114,10 +19,10 @@ class SendEncryptedMailBackendNoASCTestCase(SendMailMixin, TestCase):
 
     def test_send_mail_function_html_message_encrypted_alternative(self):
         msg_subject = "Test Subject"
-        to = ['django-email-extras@example.com']
+        to = ['django-secure-mail@example.com']
         from_email = settings.DEFAULT_FROM_EMAIL
         msg_text = "Test Body Text"
-        with open('tests/templates/email_extras/dr_suess.txt', 'r') as f:
+        with open('tests/templates/secure_mail/dr_suess.txt', 'r') as f:
             alt = f.read()
 
         self.send_mail(
@@ -141,17 +46,17 @@ class SendEncryptedMailBackendNoASCTestCase(SendMailMixin, TestCase):
 
     def test_handle_failed_alternative_encryption(self):
         msg_subject = "Test Subject"
-        to = ['django-email-extras@example.com']
+        to = ['django-secure-mail@example.com']
         from_email = settings.DEFAULT_FROM_EMAIL
         msg_text = "Test Body Text"
         msg_html = "<html><body><b>Hello</b> World <i>Text</i>"
 
         # Make sending the mail fail
-        from email_extras import utils
+        from secure_mail import utils
         previous_value = utils.encrypt_kwargs['always_trust']
         utils.encrypt_kwargs['always_trust'] = False
         # Tweak the failed content handler to simply pass
-        from email_extras import backends
+        from secure_mail import backends
         previous_content_handler = backends.handle_failed_message_encryption
         backends.handle_failed_message_encryption = lambda e: None
         with self.assertRaises(EncryptionFailedError):
@@ -163,17 +68,17 @@ class SendEncryptedMailBackendNoASCTestCase(SendMailMixin, TestCase):
 
     def test_handle_failed_attachment_encryption(self):
         msg_subject = "Test Subject"
-        to = ['django-email-extras@example.com']
+        to = ['django-secure-mail@example.com']
         from_email = settings.DEFAULT_FROM_EMAIL
         msg_text = "Test Body Text"
         msg_html = "<html><body><b>Hello</b> World <i>Text</i>"
 
         # Make sending the mail fail
-        from email_extras import utils
+        from secure_mail import utils
         previous_value = utils.encrypt_kwargs['always_trust']
         utils.encrypt_kwargs['always_trust'] = False
         # Tweak the failed content handler to simply pass
-        from email_extras import backends
+        from secure_mail import backends
         previous_content_handler = backends.handle_failed_message_encryption
         alt_handler = backends.handle_failed_alternative_encryption
         previous_alt_handler = alt_handler
@@ -189,21 +94,21 @@ class SendEncryptedMailBackendNoASCTestCase(SendMailMixin, TestCase):
 
 
 @override_settings(
-    EMAIL_BACKEND='email_extras.backends.EncryptingLocmemEmailBackend')
+    EMAIL_BACKEND='secure_mail.backends.EncryptingLocmemEmailBackend')
 class SendEncryptedMailBackendWithASCTestCase(SendMailMixin, TestCase):
     use_asc = True
     send_mail_function = 'tests.utils.send_mail_with_backend'
 
 
 @override_settings(
-    EMAIL_BACKEND='email_extras.backends.EncryptingLocmemEmailBackend')
+    EMAIL_BACKEND='secure_mail.backends.EncryptingLocmemEmailBackend')
 class SendDoNotEncryptMailBackendTestCase(SendMailMixin, TestCase):
     use_asc = True
     send_mail_function = 'tests.utils.send_mail_with_backend'
 
     def test_send_mail_function_txt_message(self):
         msg_subject = "Test Subject"
-        to = ['django-email-extras@example.com']
+        to = ['django-secure-mail@example.com']
         from_email = settings.DEFAULT_FROM_EMAIL
         msg_text = "Test Body Text"
 

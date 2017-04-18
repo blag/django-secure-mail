@@ -8,9 +8,9 @@ import argparse
 from django.core.management.base import LabelCommand, CommandError
 from django.utils.translation import ugettext as _
 
-from email_extras.models import Key
-from email_extras.settings import SIGNING_KEY_DATA
-from email_extras.utils import get_gpg
+from secure_mail.models import Key
+from secure_mail.settings import SIGNING_KEY_DATA
+from secure_mail.utils import get_gpg
 
 
 gpg = get_gpg()

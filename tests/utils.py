@@ -4,18 +4,18 @@ from django.conf import settings
 from django.core import mail
 from django.utils.safestring import mark_safe
 
-from email_extras.models import Key
+from secure_mail.models import Key
 
-from email_extras.utils import get_gpg, EncryptionFailedError
+from secure_mail.utils import get_gpg, EncryptionFailedError
 
 # Generated with:
 #
 # key_data = {
 #     'key_type': "RSA",
 #     'key_length': 4096,
-#     'name_real': 'django-email-extras test project',
-#     # 'name_comment': "Test address and key for django-email-extras",
-#     'name_email': 'django-email-extras@example.com',
+#     'name_real': 'django-secure-mail test project',
+#     # 'name_comment': "Test address and key for django-secure-mail",
+#     'name_email': 'django-secure-mail@example.com',
 #     'expire_date': 0,
 # }
 
@@ -23,102 +23,102 @@ from email_extras.utils import get_gpg, EncryptionFailedError
 # public_fp = key.fingerprint
 # private_key = gpg.export_keys(key.fingerprint, True, armor=True)
 # public_key = gpg.export_keys(key.fingerprint, armor=True)
-# gpg.delete_keys([private_fp], True)
+# # gpg.delete_keys([private_fp], True)
 # gpg.delete_keys([public_fp])
 # print('TEST_KEY_FINGERPRINT = "{}"'.format(public_fp))
 # print('TEST_PRIVATE_KEY = """\n{}"""'.format(private_key))
 # print('TEST_PUBLIC_KEY = """\n{}"""'.format(public_key))
 #
-TEST_KEY_FINGERPRINT = "5C5C560DA52021E167B5D713C9EA85FD5D576B8D"
+TEST_KEY_FINGERPRINT = "27011D34B2A200A3367C23C450CF2FB1F5C0624D"
 TEST_PRIVATE_KEY = """
 -----BEGIN PGP PRIVATE KEY BLOCK-----
 Version: GnuPG/MacGPG2 v2
 
-lQcXBFjrQhQBEADknfZRSqDxWY7o/yiiiXX1peUhKmMxdgHmIPdT4VL7P//DRRmK
-OBuUan22dVduA9h1tdOpEviejJmw63rJLPmFaR3knhHcPkhhlx2AoHaSNzZNZk9M
-r0c23BRILckeKGenrzhxzdWi1Yp+XWzsEzUuf0X3X8zLJ6Kf3P79d3uEA7hxupqs
-Q18NzfZx3cyewL3dL00Z54LFMf+QLyj/Rn2YKjj2XgBJ6e4cOgv3CJJCDueLDjSO
-XL4Q/yoXGahEeQlnWL0n0dya2G3zOgYfIQDDSkhSCDF5n9yiJldEVMrdckIoWtkp
-JeTJBC2lgty0vl2XuWPo8gyGJ0KDYCx/hwjoR44BsQbAx//3EmU4DWp2TqvuuFWB
-WVnFghXFRMp/SMBflQPXcLb5Qy1ea9xo64MGBsw+ajOFjf58aViUAd1YZm4ejIic
-MRYOpkSYUWR3kuZL2VZvVKC1bC3M0fkTV9lciwir4n7CivfCqxRr19tx+2Pfep13
-1gf6jtrNTRlJyvpaOPGXqJGJJS2BLuWZK+G6tHB3OnOQBGlXCraJQoTjK8V7I9ng
-LQLAOdssefV40ijznD2w7YOTI7CwSsqGamwX5diJ5bePU2Fh/paXkVSYQAScje1/
-JAbuHGp8Cewnk81VdXqav3XzHbGWuqx073881P2WYYoio2bJwMYpk2mjxQARAQAB
-AA/4iPWyxd6Av/QjB2HVdjT0wuioZLYZttS/1wSknqRWCbferEfj/IxcPbh9ZHPF
-sU2cebUnqZGaYFC49ZFyfc7ivmfdIt1toozgvuuvhUXxwusdlIU2Yxhad/Icmtz1
-QfFIJ/FRCg/oOYuBUzLYWvwVxpqsFBfykAbh5koyVqcCPpRiazdGC/5yptsJwNg5
-X9D2Mh096NgE7rfar9MqkcQpJH/iwmBsITEdfZhZ6AKpelANIrBGVJzlp1olTAbX
-NrbDwMhPNINJjIulDsUA9ulwx0n053RWc8JrUcod5B6j8qAi8SxIubvgS535dmor
-NS3nn9MkED9YY47MQZMPe9+DjwsLSYxHWqPLLFGqOFWaOE5n89MY1huoYxZa0Qaq
-IUHJkc83/2iI8Hc002h0gFPSf5HTXdWjXVAHUEaYlSQ9fL8OVwEL97RNpxlaDRVN
-iL6HDUf+d1VGSs1Ki5MuYSyFwzuAws8XNk1B6TLcdS9J7bjM8iSFpIHRXi55DHEP
-SZLotg8NTH0CfJJ1SO80rp3E+e04m2lfdhA4Eyt+EykKKjgKXGjSpImXmJ1c4zFi
-JWRFO1Jl5Fys4MWC9IT+3nvNdM3kemOUPy2GDsL9n46kQ89RdzSQKvwbMqCBm0uu
-TI2KYBXClifqEIIJedeiagufkY44d5dxFy3wwP5GZace8QgA8b1JJqfrF1/ovAqT
-7SIN/NDCz/EZ7BElYj/gMVRVy9xLLkJB3x+VXcYryI7EP/rMyB8XnRZpH7Mu9WAJ
-Npb0Ldn2TWF9/5KWrUFnbuWx4gO+1E4JiZy/7lCbiv+Moax0osDZjbob2UZFyWUM
-ePRdNpSOLKPScfvYL1iI+iJwAO+q8p5MWZ+QPVJf8dojeK6qQ2QX931gKE1s9dZr
-RyTa1QxhV30YkRMAzEoIB5cfprRV/52UGNJAkOPg8GKLvWoOLcZtYIj491WqB1en
-42NM4M2rl8fTiGinhwg25hMaQGCQa1ez6XRXrSG+zqDoYlOxakZRlWwGoGASSSOP
-cy5HGQgA8hqBIuGHps7+oC47FCvifag37jUeleknwVgyjyAa0YvYibe5WxC3oitX
-5IucWmzcgaCEO1QyRK/bKTrvRd4hJEDjGNbSKNObPpxXDRS/tucCLtpqXaudrNob
-9897jBum8HYgCljJF57+fCICGNRrYfHBytRWDhgG/8upV5/H++a15NmRoDifE8rm
-KUCfyF4ynHOx8Zf6YoNJE99uLrTlsD0rExumPFggyWLKYjnWyoDDA8nDiiJCv8ZP
-qbhJcPbJqngEkf67mVrV0DePrQ4igHW+gyWMUFMilafDm1P4SxGHSsleYTdgiQqA
-RI0Yk1bPKoZ9eWvskjEriCrvtaazjQgAkGT/z8CQ2TZ7LADqhFybPMUT3f2uzy3D
-Ifwsuczow4r6YIPSSPRPS+x2kDL+i6XllB3Haye+49e0pDGjIwbgUkoaBpWuB5cs
-Xvqu4CHpD+DGYXrpAgo0EZ4+457n71pt2+bKErlM4osVk7fMsJwcXer/Q5wW5r29
-GjaFRBqZppIjX8fli2frWUb56r38oBfTYHfPAyhcJ+b8gDqLKYPWEUoOopiCoP45
-/XBJzSDG0jiFDKg8NeGoiMCgM0WR55z3lAjZhXuhVeMCRFeqxoPwZd1j8mQofQyq
-u89qnI6dEVx9prG/bVwDLybCiOwyPefTbalGFdpGYeRjHyCUYVQ4ZYFhtEJkamFu
-Z28tZW1haWwtZXh0cmFzIHRlc3QgcHJvamVjdCA8ZGphbmdvLWVtYWlsLWV4dHJh
-c0BleGFtcGxlLmNvbT6JAjkEEwEIACMFAljrQhQCGy8HCwkIBwMCAQYVCAIJCgsE
-FgIDAQIeAQIXgAAKCRDJ6oX9XVdrjTtPD/90ygOHzgqOEYowq9XpUcye3VqL/jk0
-zichZt98qtc7x0FejPTnnzDcdEpNFH881L0lg1QxcCqjiyLqxQRfQaUFSBlwn73D
-rTxz5Ky6hyrhbpBUMt5Fd0T3M+nbBJkop0XXFTVVXwhrfd8rKKhER9vHxy2mIRYy
-CegRCGcyieazveqS7vw4SHy+fEOzbrp8PCLOJoT1HJc5qH4SdXraYdyJn7QfWs2s
-iaVMWpwNebxqtkgofdSsxWNqpfrfj1FTs506kAgI+q9x9s/jT5mXdiZFd24deiiF
-DMG2JUGVPTJdiIXQ+sbYNDwyf+EU8XNelHIcXEq84YYPDZ4D/yjwnpi57cTcmdXh
-ZrMUEKKjdvuogLZ37U7AX6yyD5K8i4MJ+VHWGNKdg+cNzJaSmfFXjuDc/gSCTy/D
-R97s5p1BrVr4ypDra3ZstbjTh8QPDD5EfecJ0GJchRrCIVyGP8UTX7IqU+3ycDLF
-I7X9+JHpkPN+AEyknaQ4TMmzFzF97VbVUC69j34sj08Sff6dov6xtnLCDiQC+u2f
-jOPjp4I4hQqip2+/3pUCFKNCJbO4jZnSmUln2xAQTqsdDhHjZqA8AdRJ1e64hjzk
-VKDzIsVh0eDF64dGJDAK+J2hpC2xZ5f9PBEqjaxGNnV3TesB3PwunjPSH0DZwqtp
-ayBef79l2Ir9GA==
-=B5JT
+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
+bmdvLXNlY3VyZS1tYWlsIHRlc3QgcHJvamVjdCA8ZGphbmdvLXNlY3VyZS1tYWls
+QGV4YW1wbGUuY29tPokCOQQTAQgAIwUCWPVi9QIbLwcLCQgHAwIBBhUIAgkKCwQW
+AgMBAh4BAheAAAoJEFDPL7H1wGJNa50QALUpLOG3yHSAo1YJgl8kwIkVkGvEQPgv
+bNMjhPQSaURQiDezi2rqFNTgkE8LekLckY6/PZMx1rGOEz3odEGGqR7x+/V/5/Pv
+sw7gbbdHvhm2oCoL0AQkZld3DGbuyJ7/aayah6hVPeZdEhQVXH6OyvWNy43wkVVM
+YheF2t33rIyhknIxx92Q3k3hkhUPFlvr89YYYcv1UVUbViFh5dHn+J1MVkYRiJ9G
+DGK0amfxuAbIK0CFLBop/Hky3GvPhBLtPq2eVSi6dCXZPW9elicGP8f4hbx1ncGO
+e2Q9Kn69lkP3IZQEDighEH2qZzPW6XTvkjQl3aBHn19NXhmPYyvUCHvQJZVr4tJV
+ULz05DTEB4uClcVa8RADALwD7212y94mqtFFXSOeRI+fIN2rcKcQMS5z6YDBedJG
+/tyzUiUbLfigqpguQlg/KWH7Iy7M8Vn+OFbz5BdOog7ydRHuIUjUTB9VsorWSTDD
+n/fiJnxOp3m2WgUMdAaMC0LTRyudTCenGCU7VOenFqrE0J619HMfiUFWVuefYF9E
+ZbULOtaw8iIIyY9fXAV0/IJ1DZSgj9b1wV0fvFq+tUmGpJqVE/u28b4F59TzQuLV
+L17PFZFT/6dWwHAtYEz1sBRkjLjz9lMvrJ+xyJN6RxcUly/2aXqoJYy9D2HV2Hwg
++dSC2qTY1iry
+=ptD7
 -----END PGP PRIVATE KEY BLOCK-----
 """
 TEST_PUBLIC_KEY = """
 -----BEGIN PGP PUBLIC KEY BLOCK-----
 Version: GnuPG/MacGPG2 v2
 
-mQINBFjrQhQBEADknfZRSqDxWY7o/yiiiXX1peUhKmMxdgHmIPdT4VL7P//DRRmK
-OBuUan22dVduA9h1tdOpEviejJmw63rJLPmFaR3knhHcPkhhlx2AoHaSNzZNZk9M
-r0c23BRILckeKGenrzhxzdWi1Yp+XWzsEzUuf0X3X8zLJ6Kf3P79d3uEA7hxupqs
-Q18NzfZx3cyewL3dL00Z54LFMf+QLyj/Rn2YKjj2XgBJ6e4cOgv3CJJCDueLDjSO
-XL4Q/yoXGahEeQlnWL0n0dya2G3zOgYfIQDDSkhSCDF5n9yiJldEVMrdckIoWtkp
-JeTJBC2lgty0vl2XuWPo8gyGJ0KDYCx/hwjoR44BsQbAx//3EmU4DWp2TqvuuFWB
-WVnFghXFRMp/SMBflQPXcLb5Qy1ea9xo64MGBsw+ajOFjf58aViUAd1YZm4ejIic
-MRYOpkSYUWR3kuZL2VZvVKC1bC3M0fkTV9lciwir4n7CivfCqxRr19tx+2Pfep13
-1gf6jtrNTRlJyvpaOPGXqJGJJS2BLuWZK+G6tHB3OnOQBGlXCraJQoTjK8V7I9ng
-LQLAOdssefV40ijznD2w7YOTI7CwSsqGamwX5diJ5bePU2Fh/paXkVSYQAScje1/
-JAbuHGp8Cewnk81VdXqav3XzHbGWuqx073881P2WYYoio2bJwMYpk2mjxQARAQAB
-tEJkamFuZ28tZW1haWwtZXh0cmFzIHRlc3QgcHJvamVjdCA8ZGphbmdvLWVtYWls
-LWV4dHJhc0BleGFtcGxlLmNvbT6JAjkEEwEIACMFAljrQhQCGy8HCwkIBwMCAQYV
-CAIJCgsEFgIDAQIeAQIXgAAKCRDJ6oX9XVdrjTtPD/90ygOHzgqOEYowq9XpUcye
-3VqL/jk0zichZt98qtc7x0FejPTnnzDcdEpNFH881L0lg1QxcCqjiyLqxQRfQaUF
-SBlwn73DrTxz5Ky6hyrhbpBUMt5Fd0T3M+nbBJkop0XXFTVVXwhrfd8rKKhER9vH
-xy2mIRYyCegRCGcyieazveqS7vw4SHy+fEOzbrp8PCLOJoT1HJc5qH4SdXraYdyJ
-n7QfWs2siaVMWpwNebxqtkgofdSsxWNqpfrfj1FTs506kAgI+q9x9s/jT5mXdiZF
-d24deiiFDMG2JUGVPTJdiIXQ+sbYNDwyf+EU8XNelHIcXEq84YYPDZ4D/yjwnpi5
-7cTcmdXhZrMUEKKjdvuogLZ37U7AX6yyD5K8i4MJ+VHWGNKdg+cNzJaSmfFXjuDc
-/gSCTy/DR97s5p1BrVr4ypDra3ZstbjTh8QPDD5EfecJ0GJchRrCIVyGP8UTX7Iq
-U+3ycDLFI7X9+JHpkPN+AEyknaQ4TMmzFzF97VbVUC69j34sj08Sff6dov6xtnLC
-DiQC+u2fjOPjp4I4hQqip2+/3pUCFKNCJbO4jZnSmUln2xAQTqsdDhHjZqA8AdRJ
-1e64hjzkVKDzIsVh0eDF64dGJDAK+J2hpC2xZ5f9PBEqjaxGNnV3TesB3PwunjPS
-H0DZwqtpayBef79l2Ir9GA==
-=X9C8
+mQINBFj1YvUBEADE4L7qDCQINSwwygbcUb2BH909zk9/Ih1wRGB7rxoWFDbba0B7
+lDfscxPX7+z+sXUFEjf4+puD4VdBibvZK3gswed9YNUZ7vJDb21TAEfVrjteQYMu
+Y7dctnaXzxJwmG/BKYHtVTr7ZlqVHuazs7Kbfv9NHDVr2cLz5drAQ/Y9TBQJd1kc
+wEnJZ/04EnkjuYVLlL2uKV76lmBoFNFJs8ug2yZmdGY4UBEPlslpqsl3Io76s+N9
+p5ylmmaILf6fzAblcw2gHF/VKQAuZlOD38e69vd9p7PbZVsMQvXMMQZxREK2yB53
+f98WgOKAOUzq+1Yrt+u6OFbMtArgJQUq/b7vUkmC4047vIwrLaH/0vI9S16osrmW
+39nIp4VXzB55N/pd3ynqY+HU4iqErV74Cv1cNqaiirMToE/1Iiro5hZ6gmHMHR0p
+ghGrHlyNt7UaSdjHlhFnCq7Xr7Wbra7lZpXzG6HtDBgQT848g5jOb5bKOdenKMHo
+JRg90KDNSFo0PLvV3qL788LDAPbUJ1WkXcykg9Jkgw19SCa830CXWaf2X6Jc3hsL
+0A5hg+b2o3EQrnZgSNUouY8v6foaAI9I7tvlktm0mvtsNqgxqsA/JqsXiVwTf7xh
+AAdkitZH1ufMZkoXDK28Mdd28nTvko4fo7K1jCPPrI1KjPxeQnO3M2wdxQARAQAB
+tEBkamFuZ28tc2VjdXJlLW1haWwgdGVzdCBwcm9qZWN0IDxkamFuZ28tc2VjdXJl
+LW1haWxAZXhhbXBsZS5jb20+iQI5BBMBCAAjBQJY9WL1AhsvBwsJCAcDAgEGFQgC
+CQoLBBYCAwECHgECF4AACgkQUM8vsfXAYk1rnRAAtSks4bfIdICjVgmCXyTAiRWQ
+a8RA+C9s0yOE9BJpRFCIN7OLauoU1OCQTwt6QtyRjr89kzHWsY4TPeh0QYapHvH7
+9X/n8++zDuBtt0e+GbagKgvQBCRmV3cMZu7Inv9prJqHqFU95l0SFBVcfo7K9Y3L
+jfCRVUxiF4Xa3fesjKGScjHH3ZDeTeGSFQ8WW+vz1hhhy/VRVRtWIWHl0ef4nUxW
+RhGIn0YMYrRqZ/G4BsgrQIUsGin8eTLca8+EEu0+rZ5VKLp0Jdk9b16WJwY/x/iF
+vHWdwY57ZD0qfr2WQ/chlAQOKCEQfapnM9bpdO+SNCXdoEefX01eGY9jK9QIe9Al
+lWvi0lVQvPTkNMQHi4KVxVrxEAMAvAPvbXbL3iaq0UVdI55Ej58g3atwpxAxLnPp
+gMF50kb+3LNSJRst+KCqmC5CWD8pYfsjLszxWf44VvPkF06iDvJ1Ee4hSNRMH1Wy
+itZJMMOf9+ImfE6nebZaBQx0BowLQtNHK51MJ6cYJTtU56cWqsTQnrX0cx+JQVZW
+559gX0RltQs61rDyIgjJj19cBXT8gnUNlKCP1vXBXR+8Wr61SYakmpUT+7bxvgXn
+1PNC4tUvXs8VkVP/p1bAcC1gTPWwFGSMuPP2Uy+sn7HIk3pHFxSXL/ZpeqgljL0P
+YdXYfCD51ILapNjWKvI=
+=Tb82
 -----END PGP PUBLIC KEY BLOCK-----
 """
 
@@ -206,12 +206,12 @@ class SendMailFunctionMixin(GPGMixin):
 class SendMailMixin(KeyMixin, SendMailFunctionMixin):
     def test_send_mail_key_validation_fail_raises_exception(self):
         msg_subject = "Test Subject"
-        to = ['django-email-extras@example.com']
+        to = ['django-secure-mail@example.com']
         from_email = settings.DEFAULT_FROM_EMAIL
         msg_text = "Test Body Text"
         msg_html = "<html><body><b>Hello</b> World <i>Text</i>"
 
-        from email_extras import utils
+        from secure_mail import utils
         previous_value = utils.encrypt_kwargs['always_trust']
         utils.encrypt_kwargs['always_trust'] = False
         with self.assertRaises(EncryptionFailedError):
@@ -222,7 +222,7 @@ class SendMailMixin(KeyMixin, SendMailFunctionMixin):
 
     def test_send_mail_function_txt_message(self):
         msg_subject = "Test Subject"
-        to = ['django-email-extras@example.com']
+        to = ['django-secure-mail@example.com']
         from_email = settings.DEFAULT_FROM_EMAIL
         msg_text = "Test Body Text"
 
@@ -266,7 +266,7 @@ class SendMailMixin(KeyMixin, SendMailFunctionMixin):
     def test_send_mail_function_txt_message_with_unencrypted_recipients(self):
         self.maxDiff = 10000
         msg_subject = "Test Subject"
-        to = ['django-email-extras@example.com', 'unencrypted@example.com']
+        to = ['django-secure-mail@example.com', 'unencrypted@example.com']
         from_email = settings.DEFAULT_FROM_EMAIL
         msg_text = "Test Body Text"
 
@@ -321,7 +321,7 @@ class SendMailMixin(KeyMixin, SendMailFunctionMixin):
     def test_send_mail_function_txt_message_with_unencrypted_recipients_with_attachment_from_filename(self):  # noqa: E501
         self.maxDiff = 10000
         msg_subject = "Test Subject"
-        to = ['django-email-extras@example.com', 'unencrypted@example.com']
+        to = ['django-secure-mail@example.com', 'unencrypted@example.com']
         from_email = settings.DEFAULT_FROM_EMAIL
         msg_text = "Test Body Text"
         msg_html = "<html><body><b>Hello</b> World <i>Text</i>"
@@ -400,7 +400,7 @@ class SendMailMixin(KeyMixin, SendMailFunctionMixin):
     def test_send_mail_function_html_message(self):
         self.maxDiff = 10000
         msg_subject = "Test Subject"
-        to = ['django-email-extras@example.com']
+        to = ['django-secure-mail@example.com']
         from_email = settings.DEFAULT_FROM_EMAIL
         msg_text = "Test Body Text"
         msg_html = "<html><body><b>Hello</b> World <i>Text</i>"
@@ -457,7 +457,7 @@ class SendMailMixin(KeyMixin, SendMailFunctionMixin):
     def test_send_mail_function_html_message_attachment(self):
         self.maxDiff = 10000
         msg_subject = "Test Subject"
-        to = ['django-email-extras@example.com']
+        to = ['django-secure-mail@example.com']
         from_email = settings.DEFAULT_FROM_EMAIL
         msg_text = "Test Body Text"
         msg_html = "<html><body><b>Hello</b> World <i>Text</i>"
@@ -515,7 +515,7 @@ class SendMailMixin(KeyMixin, SendMailFunctionMixin):
     def test_send_mail_function_html_message_attachment_from_filename(self):
         self.maxDiff = 10000
         msg_subject = "Test Subject"
-        to = ['django-email-extras@example.com']
+        to = ['django-secure-mail@example.com']
         from_email = settings.DEFAULT_FROM_EMAIL
         msg_text = "Test Body Text"
         msg_html = "<html><body><b>Hello</b> World <i>Text</i>"
@@ -574,7 +574,7 @@ class SendMailMixin(KeyMixin, SendMailFunctionMixin):
     def test_send_mail_function_html_message_encrypted_attachment(self):
         self.maxDiff = 10000
         msg_subject = "Test Subject"
-        to = ['django-email-extras@example.com']
+        to = ['django-secure-mail@example.com']
         from_email = settings.DEFAULT_FROM_EMAIL
         msg_text = "Test Body Text"
         msg_html = "<html><body><b>Hello</b> World <i>Text</i>"
@@ -597,13 +597,13 @@ class SendMailMixin(KeyMixin, SendMailFunctionMixin):
     def test_send_mail_function_html_message_attachment_from_file(self):
         self.maxDiff = 10000
         msg_subject = "Test Subject"
-        to = ['django-email-extras@example.com']
+        to = ['django-secure-mail@example.com']
         from_email = settings.DEFAULT_FROM_EMAIL
         msg_text = "Test Body Text"
 
         self.send_mail(
             msg_subject, msg_text, from_email, to,
-            attachments=['tests/templates/email_extras/dr_suess.html'])
+            attachments=['tests/templates/secure_mail/dr_suess.html'])
 
         message = mail.outbox[0]
 
@@ -643,7 +643,7 @@ class SendMailMixin(KeyMixin, SendMailFunctionMixin):
         self.assertEquals(
             filename, 'dr_suess.html{}'.format('.asc' if self.use_asc else ''))
         self.assertEquals(mimetype, "application/gpg-encrypted")
-        with open("tests/templates/email_extras/dr_suess.html", 'r') as f:
+        with open("tests/templates/secure_mail/dr_suess.html", 'r') as f:
             self.assertEquals(str(self.gpg.decrypt(content)), f.read())
 
         # Clean up the private key we imported here, leave the public key to be

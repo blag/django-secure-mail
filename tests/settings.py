@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 
 import os
 
-SITE_NAME = 'django-email-extras Test Project'
+SITE_NAME = 'django-secure-mail Test Project'
 DEFAULT_FROM_EMAIL = 'noreply@example.com'
 ADMINS = [
     ('Admin', 'admin@example.com'),
@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'email_extras',
+    'secure_mail',
 ]
 
 MIDDLEWARE = [
@@ -131,9 +131,11 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-EMAIL_EXTRAS_GNUPG_HOME = 'gpg_keyring'
-EMAIL_EXTRAS_ALWAYS_TRUST_KEYS = True
-EMAIL_EXTRAS_GNUPG_ENCODING = 'utf-8'
+SILENCED_SYSTEM_CHECKS = ['1_10.W001']
+
+SECURE_MAIL_GNUPG_HOME = 'gpg_keyring'
+SECURE_MAIL_ALWAYS_TRUST_KEYS = True
+SECURE_MAIL_GNUPG_ENCODING = 'utf-8'
 
 os.environ['PATH'] += ':./tests'
 os.environ['BROWSER'] = 'write_mail.sh'

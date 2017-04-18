@@ -1,3 +1,3 @@
 include LICENSE
 include README.rst
-recursive-include email_extras *
+recursive-include secure_mail *

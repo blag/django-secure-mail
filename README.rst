@@ -1,24 +1,18 @@
-.. image:: https://travis-ci.org/stephenmcd/django-email-extras.svg?branch=master
-    :target: https://travis-ci.org/stephenmcd/django-email-extras
+.. image:: https://travis-ci.org/blag/django-secure-mail.svg?branch=master
+    :target: https://travis-ci.org/blag/django-secure-mail
 
-.. image:: https://coveralls.io/repos/github/stephenmcd/django-email-extras/badge.svg
-    :target: https://coveralls.io/github/stephenmcd/django-email-extras
+.. image:: https://coveralls.io/repos/github/blag/django-secure-mail/badge.svg
+    :target: https://coveralls.io/github/blag/django-secure-mail
 
 
-Created by `Stephen McDonald <http://twitter.com/stephen_mcd>`_
+Created by `blag <http://github.com/blag>`_.
 
 Introduction
 ============
 
-django-email-extras is a Django reusable app providing the
-ability to send PGP encrypted and multipart emails using
-Django templates. These features can be used together or
-separately. When configured to send PGP encrypted email,
-the ability for Admin users to manage PGP keys is also
-provided.
-
-A tool for automatically opening multipart emails in a
-local web browser during development is also provided.
+django-secure-mail is a Django reusable app providing a mail backend to send
+PGP signed and encrypted emails. When configured to send PGP encrypted email,
+the ability for Admin users to manage PGP keys is also provided.
 
 
 Dependencies
@@ -31,15 +25,15 @@ Dependencies
 Installation
 ============
 
-The easiest way to install django-email-extras is directly from PyPi
+The easiest way to install django-secure-mail is directly from PyPi
 using `pip <https://pip.pypa.io/en/stable/>`_ by running the command
 below:
 
 .. code-block:: bash
 
-    $ pip install -U django-email-extras
+    $ pip install -U django-secure-mail
 
-Otherwise you can download django-email-extras and install it directly
+Otherwise you can download django-secure-mail and install it directly
 from source:
 
 .. code-block:: bash
@@ -47,20 +41,17 @@ from source:
     $ python setup.py install
 
 
-Usage
-=====
+Configuration
+=============
 
-Once installed, first add ``email_extras`` to your ``INSTALLED_APPS``
-setting and run the migrations. Then there are two functions for sending email
-in the ``email_extras.utils`` module:
+Once installed, first add ``secure_mail`` to your ``INSTALLED_APPS``
+setting and run the migrations.
 
-* ``send_mail``
-* ``send_mail_template``
+Then set ``EMAIL_BACKEND`` in your settings module to
+``'secure_mail.backends.EncryptingSmtpEmailBackend'`` or one of the development
+and testing backends listed in `Development and Testing`_.
 
-The former mimics the signature of ``django.core.mail.send_mail``
-while the latter provides the ability to send multipart emails
-using the Django templating system. If configured correctly, both
-these functions will PGP encrypt emails as described below.
+And finally, you can optionally configure `Sending PGP Signed Email`_.
 
 
 Sending PGP Encrypted Email
@@ -68,10 +59,9 @@ Sending PGP Encrypted Email
 
 `PGP explanation <https://en.wikipedia.org/wiki/Pretty_Good_Privacy>`_
 
-Using `python-gnupg <https://bitbucket.org/vinay.sajip/python-gnupg>`_, two
-models are defined in ``email_extras.models`` - ``Key`` and ``Address``
-which represent a PGP key and an email address for a successfully
-imported key. These models exist purely for the sake of importing
+Using `python-gnupg`_, two models are defined in ``secure_mail.models`` -
+``Key`` and ``Address`` which represent a PGP key and an email address for a
+successfully imported key. These models exist purely for the sake of importing
 keys and removing keys for a particular address via the Django
 Admin.
 
@@ -94,17 +84,15 @@ public encryption key, since the private key will be stored on the
 server.
 
 This project ships with a Django management command to generate and
-export private signing keys: ``email_signing_key``
-management command.
+export signing keys: ``email_signing_key``.
 
-You first need to set the ``EMAIL_EXTRAS_SIGNING_KEY_DATA`` option in your project's
-``settings.py``. This is a dictionary that is passed as keyword arguments
-directly to ``GPG.gen_key()``, so please read and understand all of the
-available `options in their documentation <https://pythonhosted.org/python-gnupg/#generating-keys>`_. The default settings are:
+You first need to set the ``SECURE_MAIL_SIGNING_KEY_DATA`` option in your
+project's ``settings.py``. This is a dictionary that is passed as keyword arguments directly to ``GPG.gen_key()``, so please read and understand all of
+the available `options in their documentation <https://pythonhosted.org/python-gnupg/#generating-keys>`_. The default settings are:
 
 .. code-block:: python
 
-    EMAIL_EXTRAS_SIGNING_KEY_DATA = {
+    SECURE_MAIL_SIGNING_KEY_DATA = {
         'key_type': "RSA",
         'key_length': 4096,
         'name_real': settings.SITE_NAME,
@@ -152,78 +140,63 @@ You can also perform all tasks with one command:
 Use the ``--help`` option to see the complete help text for the command.
 
 
-Sending Multipart Email with Django Templates
-=============================================
+Options
+=======
 
-As mentioned above, the following function is provided in
-the ``email_extras.utils`` module:
-
-.. code-block:: python
-
-    send_mail_template(subject, template, addr_from, addr_to,
-        fail_silently=False, attachments=None, context=None,
-        headers=None)
-
-The arguments that differ from ``django.core.mail.send_mail`` are
-``template`` and ``context``. The ``template`` argument is simply
-the name of the template to be used for rendering the email contents.
-
-A template consists of both a HTML file and a TXT file each responsible
-for their respective versions of the email and should be stored in
-the ``email_extras`` directory where your templates are stored,
-therefore if the name ``contact_form`` was given for the ``template``
-argument, the two template files for the email would be:
-
-* ``templates/email_extras/contact_form.html``
-* ``templates/email_extras/contact_form.txt``
-
-The ``attachments`` argument is a list of files to attach to the email.
-Each attachment can be the full filesystem path to the file, or a
-file name / file data pair.
-
-The ``context`` argument is simply a dictionary that is used to
-populate the email templates, much like a normal request context
-would be used for a regular Django template.
-
-The ``headers`` argument is a dictionary of extra headers to put on
-the message. The keys are the header name and values are the header
-values.
-
-
-Configuration
-=============
-
-There are two settings you can configure in your project's
+There are a few settings you can configure in your project's
 ``settings.py`` module:
 
-* ``EMAIL_EXTRAS_USE_GNUPG`` - Boolean that controls whether the PGP
+* ``SECURE_MAIL_USE_GNUPG`` - Boolean that controls whether the PGP
   encryption features are used. Defaults to ``True`` if
-  ``EMAIL_EXTRAS_GNUPG_HOME`` is specified, otherwise ``False``.
-* ``EMAIL_EXTRAS_GNUPG_HOME`` - String representing a custom location
+  ``SECURE_MAIL_GNUPG_HOME`` is specified, otherwise ``False``.
+* ``SECURE_MAIL_GNUPG_HOME`` - String representing a custom location
   for the GNUPG keyring.
-* ``EMAIL_EXTRAS_GNUPG_ENCODING`` - String representing a gnupg encoding.
+* ``SECURE_MAIL_GNUPG_ENCODING`` - String representing a gnupg encoding.
   Defaults to GNUPG ``latin-1`` and could be changed to e.g. ``utf-8``
   if needed.  Check out
   `python-gnupg docs <https://pythonhosted.org/python-gnupg/#getting-started>`_
   for more info.
-* ``EMAIL_EXTRAS_ALWAYS_TRUST_KEYS`` - Skip key validation and assume
+* ``SECURE_MAIL_ALWAYS_TRUST_KEYS`` - Skip key validation and assume
   that used keys are always fully trusted.
+* ``SECURE_MAIL_SIGNING_KEY_DATA`` - A dictionary of key options for generating
+  new signing keys.
+* `` SECURE_MAIL_KEY_FINGERPRING`` - The fingerprint of the key to use when
+  signing outgoing mail, must exist in the configured keyring.
 
 
-Local Browser Testing
-=====================
+Development and Testing
+=======================
 
-When sending multipart emails during development, it can be useful
-to view the HTML part of the email in a web browser, without having
-to actually send emails and open them in a mail client. To use
-this feature during development, simply set your email backend as follows
-in your development ``settings.py`` module:
+This package provides a backend mixin if you wish to extend the backend or create a custom backend of your own.
+
+Example:
 
 .. code-block:: python
 
-    EMAIL_BACKEND = 'email_extras.backends.BrowsableEmailBackend'
+    class EncryptingLocmemEmailBackend(EncryptingEmailBackend, LocmemBackend):
+        pass
 
-With this configured, each time a multipart email is sent, it will
-be written to a temporary file, which is then automatically opened
-in a local web browser. Suffice to say, this should only be enabled
-during development!
+In addition to the ``EncryptingSmtpEmailBackend``, backends that mixin every
+other built-in Django backend are provided. These are:
+
+* ``EncryptingConsoleEmailBackend``
+* ``EncryptingLocmemEmailBackend``
+* ``EncryptingFilebasedEmailBackend``
+
+
+Alternative Django Apps
+=======================
+
+Other Django apps with similar functionality are:
+
+* `django-email-extras <https://github.com/stephenmcd/django-email-extras>`_ -
+  Provides two functions for sending PGP encrypted, multipart emails using
+  Django's template system. Also provides a mail backend that displays HTML
+  mail in the browser during development.
+* `django-gnupg-mails <https://github.com/jandd/django-gnupg-mails>`_ -
+  Provides a ``GnuPGMessage`` (subclass of Django's ``EmailMessage``) to send
+  PGP/MIME signed email.
+
+Both of those apps require third party app developers to "opt-in" to sending
+encrypted mail. This project automatically encrypts and signs all outgoing mail
+for all apps.
