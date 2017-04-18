@@ -5,14 +5,18 @@
     :target: https://coveralls.io/github/blag/django-secure-mail
 
 
-Created by `blag <http://github.com/blag>`_.
+Created by `blag <http://github.com/blag>`_. Forked from PR
+`#39 <https://github.com/stephenmcd/django-email-extras/pull/39>`_ and
+`#40 <https://github.com/stephenmcd/django-email-extras/pull/40>`_ of
+`django-email-extras <https://github.com/stephenmcd/django-email-extras>`_ by
+`Stephen McDonald <http://twitter.com/stephen_mcd>`_.
 
 Introduction
 ============
 
 django-secure-mail is a Django reusable app providing a mail backend to send
 PGP signed and encrypted emails. When configured to send PGP encrypted email,
-the ability for Admin users to manage PGP keys is also provided.
+the ability for admin users to manage PGP keys is also provided.
 
 
 Dependencies
