@@ -113,19 +113,19 @@ signing key with the ``--generate`` option:
 
 .. code-block:: bash
 
-    python manage.py email_signing_key --generate
+    $ python manage.py email_signing_key --generate
 
 To work with specific keys, identify them by their fingerprint
 
 .. code-block:: bash
 
-    python manage.py email_signing_key 7AB59FE794A7AC12EBA87507EF33F601153CFE28
+    $ python manage.py email_signing_key 7AB59FE794A7AC12EBA87507EF33F601153CFE28
 
 You can print the private key to your terminal/console with:
 
 .. code-block:: bash
 
-    python manage.py email_signing_key 7AB59FE794A7AC12EBA87507EF33F601153CFE28 --print-private-key
+    $ python manage.py email_signing_key 7AB59FE794A7AC12EBA87507EF33F601153CFE28 --print-private-key
 
 And you can upload the public signing key to one or more specified
 keyservers by passing the key server hostnames with the ``-k`` or
@@ -133,13 +133,13 @@ keyservers by passing the key server hostnames with the ``-k`` or
 
 .. code-block:: bash
 
-    python manage.py email_signing_key 7AB59FE794A7AC12EBA87507EF33F601153CFE28 -k keys.ubuntu.com keys.redhat.com -k pgp.mit.edu
+    $ python manage.py email_signing_key 7AB59FE794A7AC12EBA87507EF33F601153CFE28 -k keys.ubuntu.com keys.redhat.com -k pgp.mit.edu
 
 You can also perform all tasks with one command:
 
 .. code-block:: bash
 
-    python manage.py email_signing_key --generate --keyserver pgp.mit.edu --print-private-key
+    $ python manage.py email_signing_key --generate --keyserver pgp.mit.edu --print-private-key
 
 Use the ``--help`` option to see the complete help text for the command.
 
@@ -164,7 +164,7 @@ There are a few settings you can configure in your project's
   that used keys are always fully trusted.
 * ``SECURE_MAIL_SIGNING_KEY_DATA`` - A dictionary of key options for generating
   new signing keys.
-* `` SECURE_MAIL_KEY_FINGERPRING`` - The fingerprint of the key to use when
+* ``SECURE_MAIL_KEY_FINGERPRINT`` - The fingerprint of the key to use when
   signing outgoing mail, must exist in the configured keyring.
 
 
