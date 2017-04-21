@@ -1,0 +1,6 @@
+[run]
+branch = True
+source =
+    secure_mail
+omit =
+    tests/wsgi.py

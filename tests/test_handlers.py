@@ -21,12 +21,13 @@ class GetVariableFromExceptionTestCase(TestCase):
 
             child()
 
+        val = None
         try:
             parent()
         except Exception as e:
-            self.assertEquals(get_variable_from_exception(e, 'parent_var'), 1)
-        else:
-            self.assertTrue(False, "handler() didn't raise an exception")
+            val = get_variable_from_exception(e, 'parent_var')
+
+        self.assertEquals(val, 1)
 
     def test_get_variable_from_child(self):
         def child():
@@ -38,12 +39,13 @@ class GetVariableFromExceptionTestCase(TestCase):
 
             child()
 
+        val = None
         try:
             parent()
         except Exception as e:
-            self.assertEquals(get_variable_from_exception(e, 'child_var'), 2)
-        else:
-            self.assertTrue(False, "handler() didn't raise an exception")
+            val = get_variable_from_exception(e, 'child_var')
+
+        self.assertEquals(val, 2)
 
     def test_raise_key_error(self):
         def child():
@@ -60,8 +62,6 @@ class GetVariableFromExceptionTestCase(TestCase):
                 parent()
             except Exception as e:
                 get_variable_from_exception(e, 'grandchild_var')
-            else:
-                self.assertTrue(False, "handler() didn't raise an exception")
 
 
 class ForceDeleteKeyTestCase(KeyMixin, TestCase):

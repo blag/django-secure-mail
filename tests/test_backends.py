@@ -1,5 +1,3 @@
-import os
-
 from django.conf import settings
 from django.core import mail
 from django.test import TestCase, override_settings
@@ -7,7 +5,37 @@ from django.utils.safestring import mark_safe
 
 from secure_mail.utils import EncryptionFailedError
 
-from tests.utils import (SendMailFunctionMixin, SendMailMixin)
+from tests.utils import (
+    DeleteAllKeysMixin, KeyMixin, SendMailFunctionMixin, SendMailMixin
+)
+
+
+@override_settings(
+    EMAIL_BACKEND='secure_mail.backends.EncryptingLocmemEmailBackend')
+class SendEncryptedMailBackendWithUseGnuPGFalseTestCase(
+        KeyMixin, SendMailFunctionMixin, DeleteAllKeysMixin, TestCase):
+    use_asc = True
+    send_mail_function = 'tests.utils.send_mail_with_backend'
+
+    def test_send_mail_function_html_message(self):
+        msg_subject = "Test Subject"
+        to = ['django-secure-mail@example.com']
+        from_email = settings.DEFAULT_FROM_EMAIL
+        msg_text = "Test Body Text"
+
+        from secure_mail import backends
+        previous_value = backends.USE_GNUPG
+        backends.USE_GNUPG = False
+
+        self.send_mail(msg_subject, msg_text, from_email, to)
+
+        backends.USE_GNUPG = previous_value
+
+        self.assertEqual(len(mail.outbox), 1)
+
+        message = mail.outbox[0]
+
+        self.assertEqual(message.body, msg_text)
 
 
 @override_settings(
@@ -80,15 +108,11 @@ class SendEncryptedMailBackendNoASCTestCase(SendMailMixin, TestCase):
         # Tweak the failed content handler to simply pass
         from secure_mail import backends
         previous_content_handler = backends.handle_failed_message_encryption
-        alt_handler = backends.handle_failed_alternative_encryption
-        previous_alt_handler = alt_handler
         backends.handle_failed_message_encryption = lambda e: None
-        backends.handle_failed_alternative_encryption = lambda e: None
         with self.assertRaises(EncryptionFailedError):
             self.send_mail(
                 msg_subject, msg_text, from_email, to,
                 attachments=[('file.txt', msg_html, 'text/html')])
-        backends.handle_failed_alternative_encryption = previous_alt_handler
         backends.handle_failed_message_encryption = previous_content_handler
         utils.encrypt_kwargs['always_trust'] = previous_value
 

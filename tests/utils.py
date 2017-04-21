@@ -1,4 +1,4 @@
-from __future__ import print_function
+from importlib import import_module
 
 from django.conf import settings
 from django.core import mail
@@ -183,22 +183,16 @@ class SendMailFunctionMixin(GPGMixin):
     send_mail_function = None
 
     def send_mail(self, *args, **kwargs):
-        if hasattr(self.send_mail_function, '__call__'):
-            # Allow functions assigned directly
-            send_mail_actual_function = self.send_mail_function
-        else:
-            # Import a function from its dotted path
-            mod, _, function = self.send_mail_function.rpartition('.')
-            try:
-                # Python 3.4+
-                from importlib import import_module
-            except ImportError:
-                # Python < 3.4
-                # From http://stackoverflow.com/a/8255024/6461688
-                mod = __import__(mod, globals(), locals(), [function])
-            else:
-                mod = import_module(mod)
-            send_mail_actual_function = getattr(mod, function)
+        # if hasattr(self.send_mail_function, '__call__'):
+        #     # Allow functions assigned directly
+        #     send_mail_actual_function = self.send_mail_function
+        # else:
+        # Import a function from its dotted path
+        mod, _, function = self.send_mail_function.rpartition('.')
+
+        mod = import_module(mod)
+
+        send_mail_actual_function = getattr(mod, function)
 
         return send_mail_actual_function(*args, **kwargs)
 
@@ -273,7 +267,9 @@ class SendMailMixin(KeyMixin, SendMailFunctionMixin):
         self.send_mail(msg_subject, msg_text, from_email, to)
 
         # Grab the unencrypted message
-        message = next((msg for msg in mail.outbox if to[1] in msg.to), None)
+        unencrypted_messages = (msg for msg in mail.outbox if to[1] in msg.to)
+
+        message = next(unencrypted_messages, None)
 
         self.assertEquals(message.subject, msg_subject)
         self.assertEquals(message.body, msg_text)
@@ -282,8 +278,12 @@ class SendMailMixin(KeyMixin, SendMailFunctionMixin):
         self.assertEquals(message.alternatives, [])
         self.assertEquals(message.attachments, [])
 
+        self.assertIsNone(next(unencrypted_messages, None))
+
         # Grab the encrypted message
-        message = next((msg for msg in mail.outbox if to[0] in msg.to), None)
+        encrypted_messages = (msg for msg in mail.outbox if to[0] in msg.to)
+
+        message = next(encrypted_messages, None)
 
         self.assertEquals(message.subject, msg_subject)
         # We decrypt and test the message body below, these just ensure the
@@ -294,6 +294,8 @@ class SendMailMixin(KeyMixin, SendMailFunctionMixin):
         self.assertEquals(message.from_email, from_email)
         self.assertEquals(message.alternatives, [])
         self.assertEquals(message.attachments, [])
+
+        self.assertIsNone(next(encrypted_messages, None))
 
         # Import the private key so we can decrypt the message body to test it
         import_result = self.gpg.import_keys(TEST_PRIVATE_KEY)
@@ -331,7 +333,9 @@ class SendMailMixin(KeyMixin, SendMailFunctionMixin):
             attachments=[('file.txt', msg_html, 'text/html')])
 
         # Grab the unencrypted message
-        message = next((msg for msg in mail.outbox if to[1] in msg.to), None)
+        unencrypted_messages = (msg for msg in mail.outbox if to[1] in msg.to)
+
+        message = next(unencrypted_messages, None)
 
         self.assertEquals(message.subject, msg_subject)
         self.assertEquals(message.body, msg_text)
@@ -339,6 +343,8 @@ class SendMailMixin(KeyMixin, SendMailFunctionMixin):
         self.assertEquals(message.from_email, from_email)
         self.assertEquals(message.alternatives, [])
         self.assertNotEquals(message.attachments, [])
+
+        self.assertIsNone(next(unencrypted_messages, None))
 
         # We should only have one attachment - the HTML message
         self.assertEquals(len(message.attachments), 1)
@@ -351,7 +357,9 @@ class SendMailMixin(KeyMixin, SendMailFunctionMixin):
         self.assertEquals(content, msg_html)
 
         # Grab the encrypted message
-        message = next((msg for msg in mail.outbox if to[0] in msg.to), None)
+        encrypted_messages = (msg for msg in mail.outbox if to[0] in msg.to)
+
+        message = next(encrypted_messages, None)
 
         self.assertEquals(message.subject, msg_subject)
         # We decrypt and test the message body below, these just ensure the
@@ -362,6 +370,8 @@ class SendMailMixin(KeyMixin, SendMailFunctionMixin):
         self.assertEquals(message.from_email, from_email)
         self.assertEquals(message.alternatives, [])
         self.assertNotEquals(message.attachments, [])
+
+        self.assertIsNone(next(encrypted_messages, None))
 
         # Import the private key so we can decrypt the message body to test it
         import_result = self.gpg.import_keys(TEST_PRIVATE_KEY)

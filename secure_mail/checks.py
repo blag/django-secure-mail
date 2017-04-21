@@ -1,18 +1,19 @@
 from django.core.checks import Tags, Error
 
 from secure_mail.settings import (
-    GNUPG_HOME, SIGNING_KEY_FINGERPRINT, USE_GNUPG
+    GNUPG_HOME, SIGNING_KEY_FINGERPRINT,
 )
 from secure_mail.utils import get_gpg
 
 
 class SecureMailTags(Tags):
     mail = 'mail'
+    config = 'config'
 
 
 def check_signing_key(app_configs, **kwargs):
     errors = []
-    if USE_GNUPG and SIGNING_KEY_FINGERPRINT is not None:
+    if SIGNING_KEY_FINGERPRINT is not None:
         gpg = get_gpg()
         try:
             gpg.list_keys(True).key_map[SIGNING_KEY_FINGERPRINT]
@@ -30,3 +31,17 @@ def check_signing_key(app_configs, **kwargs):
                       id='secure_mail.E0001')
             ]
     return errors
+
+
+def check_can_import_gpg(app_configs, **kwargs):
+    try:
+        import gnupg  # noqa: F401
+    except ImportError:  # pragma: no cover
+        errors = [Error("Could not import gnupg",
+                        hint="Install python-gnupg and ensure gnupg.py is in"
+                             "PYTHONPATH",
+                        id='secure_mail.E0002')]
+    else:
+        errors = []
+    finally:
+        return errors

@@ -28,14 +28,14 @@ matrix:
     - env: DJANGO_VERSION='https://github.com/django/django/archive/master.tar.gz'
 install:
   - pip install coverage coveralls flake8 python-gnupg
-  - pip install -q "$DJANGO_VERSION"
+  - pip install "$DJANGO_VERSION"
 before_script:
   # Make sure we have gpg installed; this also logs the version of GPG
   - gpg --version
 script:
   - flake8 secure_mail --exclude=secure_mail/migrations
-  - coverage run --include=secure_mail/*.py manage.py migrate
-  - coverage run --include=secure_mail/*.py --omit=secure_mail/migrations/*.py manage.py test tests
+  - coverage run manage.py migrate
+  - coverage run manage.py test tests
 after_script:
   - coverage combine
   - coveralls

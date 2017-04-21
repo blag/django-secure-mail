@@ -1,5 +1,4 @@
 from django.contrib.auth import get_user_model
-from django.core.urlresolvers import resolve
 from django.test import TestCase
 from django.test.client import RequestFactory
 try:

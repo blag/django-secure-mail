@@ -12,12 +12,12 @@ class KeyFormTestCase(GPGMixin, TestCase):
     maxDiff = 10000
 
     def setUp(self):
-        if TEST_KEY_FINGERPRINT in self.gpg.list_keys().key_map:
-            self.gpg.delete_keys([TEST_KEY_FINGERPRINT])
+        # if TEST_KEY_FINGERPRINT in self.gpg.list_keys().key_map:
+        self.gpg.delete_keys([TEST_KEY_FINGERPRINT])
 
     def tearDown(self):
-        if TEST_KEY_FINGERPRINT in self.gpg.list_keys().key_map:
-            self.gpg.delete_keys([TEST_KEY_FINGERPRINT])
+        # if TEST_KEY_FINGERPRINT in self.gpg.list_keys().key_map:
+        self.gpg.delete_keys([TEST_KEY_FINGERPRINT])
 
     def test_valid_key_data(self):
         form = KeyForm(data={

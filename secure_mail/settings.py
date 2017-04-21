@@ -1,5 +1,4 @@
 from django.conf import settings
-from django.core.exceptions import ImproperlyConfigured
 
 
 # DEFAULT_FAILURE_HANDLERS = {
@@ -47,9 +46,3 @@ SIGNING_KEY_DATA = {
 SIGNING_KEY_DATA.update(getattr(settings, "SECURE_MAIL_SIGNING_KEY_DATA", {}))
 SIGNING_KEY_FINGERPRINT = getattr(
     settings, "SECURE_MAIL_SIGNING_KEY_FINGERPRINT", None)
-
-if USE_GNUPG:
-    try:
-        import gnupg  # noqa: F401
-    except ImportError:  # pragma: no cover
-        raise ImproperlyConfigured("Could not import gnupg")

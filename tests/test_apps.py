@@ -4,7 +4,7 @@ from django.core.management import call_command
 from django.core.management.base import SystemCheckError
 from django.test import TestCase, override_settings
 
-from secure_mail.utils import BadSigningKeyError, check_signing_key
+from secure_mail.checks import check_signing_key
 
 from tests.utils import (
     GPGMixin, TEST_PRIVATE_KEY, TEST_KEY_FINGERPRINT,
@@ -22,6 +22,17 @@ MODIFIED_FINGERPRINT = "{}{}".format(
 
 
 @override_settings(
+    SECURE_MAIL_SIGNING_KEY_FINGERPRINT=None)
+class NoSigningKeyErrorTestCase(GPGMixin, TestCase):
+    use_asc = False
+    maxDiff = 10000
+    send_mail_function = 'secure_mail.utils.send_mail'
+
+    def test_check_signing_key(self):
+        self.assertEqual(check_signing_key([]), [])
+
+
+@override_settings(
     SECURE_MAIL_SIGNING_KEY_FINGERPRINT=TEST_KEY_FINGERPRINT)
 class NoBadSigningKeyErrorTestCase(GPGMixin, TestCase):
     use_asc = False
@@ -36,20 +47,6 @@ class NoBadSigningKeyErrorTestCase(GPGMixin, TestCase):
         super(NoBadSigningKeyErrorTestCase, self).tearDown()
         self.gpg.delete_keys(TEST_KEY_FINGERPRINT, True)
         self.gpg.delete_keys(TEST_KEY_FINGERPRINT)
-
-    def test_no_exception(self):
-        from secure_mail import utils
-        try:
-            previous_value = utils.SIGNING_KEY_FINGERPRINT
-            utils.SIGNING_KEY_FINGERPRINT = TEST_KEY_FINGERPRINT
-            check_signing_key()
-        except (BadSigningKeyError, KeyError):
-            error_raised = True
-        else:
-            error_raised = False
-        finally:
-            self.assertFalse(error_raised, "BadSigningKeyError was raised")
-            utils.SIGNING_KEY_FINGERPRINT = previous_value
 
     def test_successful_check(self):
         from secure_mail import (checks, settings, utils)
@@ -87,19 +84,6 @@ class BadSigningKeyErrorTestCase(GPGMixin, TestCase):
         super(BadSigningKeyErrorTestCase, self).tearDown()
         self.gpg.delete_keys(TEST_KEY_FINGERPRINT, True)
         self.gpg.delete_keys(TEST_KEY_FINGERPRINT)
-
-    def test_exception(self):
-        from secure_mail import utils
-        try:
-            previous_value = utils.SIGNING_KEY_FINGERPRINT
-            utils.SIGNING_KEY_FINGERPRINT = MODIFIED_FINGERPRINT
-            check_signing_key()
-        except BadSigningKeyError:
-            self.assertTrue(True, "BadSigningKeyError was raised")
-        else:
-            self.assertFalse(True, "No BadSigningKeyError was raised")
-        finally:
-            utils.SIGNING_KEY_FINGERPRINT = previous_value
 
     def test_unsuccessful_check(self):
         from secure_mail import (checks, settings, utils)
