@@ -1,10 +1,5 @@
 import re
 import sys
-try:
-    from io import StringIO
-except ImportError:
-    from cStringIO import StringIO
-from unittest import skipIf
 
 from django.core.management import call_command, CommandError
 from django.test import TestCase
@@ -13,9 +8,20 @@ from secure_mail.models import Key
 
 from tests.utils import TEST_KEY_FINGERPRINT
 
+if sys.version_info < (3,):
+    from io import BytesIO as StringIO
+else:
+    from io import StringIO
 
-@skipIf(sys.version_info < (3,), "Test uses assertRaisesRegex")
+
 class TestEmailSigningKeyCommandTestCase(TestCase):
+    @classmethod
+    def setUpClass(cls):
+        super(TestEmailSigningKeyCommandTestCase, cls).setUpClass()
+        if sys.version_info < (3,):
+            cls.assertRegex = cls.assertRegexpMatches
+            cls.assertRaisesRegex = cls.assertRaisesRegexp
+
     def _generate_signing_key(self):
         out = StringIO()
         err = StringIO()
