@@ -2,5 +2,6 @@
 branch = True
 source =
     secure_mail
+    tests
 omit =
     tests/wsgi.py
