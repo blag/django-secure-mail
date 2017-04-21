@@ -24,7 +24,7 @@ setup(
                 "system.",
     long_description=open("README.rst").read(),
     url="https://github.com/blag/django-secure-mail",
-    packages=find_packages(),
+    packages=find_packages(exclude=("tests",)),
     zip_safe=False,
     include_package_data=True,
     install_requires=[

@@ -4,6 +4,6 @@
 .coverage
 tests/mail.txt
 
+dist/
 gpg_keyring/
 htmlcov/
-tests/fixtures/

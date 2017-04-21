@@ -1,3 +1,11 @@
+include AUTHORS
 include LICENSE
 include README.rst
-recursive-include secure_mail *
+include *.py
+recursive-include docs *.py
+recursive-include docs *.rst
+recursive-include secure_mail *.html
+recursive-include secure_mail *.py
+recursive-include tests *
+global-exclude __pycache__
+global-exclude *.py[co]
