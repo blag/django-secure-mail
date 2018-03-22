@@ -85,7 +85,9 @@ class TestEmailSigningKeyCommandTestCase(TestCase):
         header, version = print_private_key_data[0:2]
         footer = print_private_key_data[-1]
 
-        self.assertRegex(version, r'^Version: .*$')
+        # The "Version" header key is not required:
+        # https://security.stackexchange.com/a/46609
+        # self.assertRegex(version, r'^Version: .*$')
         self.assertEquals(header, "-----BEGIN PGP PRIVATE KEY BLOCK-----")
         self.assertEquals(footer, "-----END PGP PRIVATE KEY BLOCK-----")
 
