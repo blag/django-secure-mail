@@ -29,7 +29,7 @@ def get_variable_from_exception(exception, variable_name):
 
 def default_handle_failed_encryption(exception):
     """
-    Handle failures when trying to encrypt alternative content for messages
+    Handle failures when trying to encrypt content for messages
     """
     raise exception
 
@@ -43,7 +43,7 @@ def default_handle_failed_alternative_encryption(exception):
 
 def default_handle_failed_attachment_encryption(exception):
     """
-    Handle failures when trying to encrypt alternative content for messages
+    Handle failures when trying to encrypt attachment content for messages
     """
     raise exception
 
