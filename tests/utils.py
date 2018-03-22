@@ -1,4 +1,6 @@
+from email.mime.base import MIMEBase
 from importlib import import_module
+from os.path import basename
 
 from django.conf import settings
 from django.core import mail
@@ -604,16 +606,21 @@ class SendMailMixin(KeyMixin, SendMailFunctionMixin):
         self.assertEquals(mimetype, "application/gpg-encrypted")
         self.assertEquals(content, msg_html)
 
-    def test_send_mail_function_html_message_attachment_from_file(self):
+    def test_send_mail_function_html_message_attachment_from_mime(self):
         self.maxDiff = 10000
         msg_subject = "Test Subject"
         to = ['django-secure-mail@example.com']
         from_email = settings.DEFAULT_FROM_EMAIL
         msg_text = "Test Body Text"
+        attachment_filename = 'tests/templates/secure_mail/dr_suess.html'
 
-        self.send_mail(
-            msg_subject, msg_text, from_email, to,
-            attachments=['tests/templates/secure_mail/dr_suess.html'])
+        message = MIMEBase('text', 'plain', name=basename(attachment_filename))
+
+        with open(attachment_filename, 'r') as f:
+            message.set_payload(f.read())
+
+        self.send_mail(msg_subject, msg_text, from_email, to,
+                       attachments=[message])
 
         message = mail.outbox[0]
 
@@ -651,9 +658,11 @@ class SendMailMixin(KeyMixin, SendMailFunctionMixin):
         # cleartext
         filename, content, mimetype = message.attachments[0]
         self.assertEquals(
-            filename, 'dr_suess.html{}'.format('.asc' if self.use_asc else ''))
+            filename, '{}{}'.format(
+                basename(attachment_filename),
+                '.asc' if self.use_asc else ''))
         self.assertEquals(mimetype, "application/gpg-encrypted")
-        with open("tests/templates/secure_mail/dr_suess.html", 'r') as f:
+        with open(attachment_filename, 'r') as f:
             self.assertEquals(str(self.gpg.decrypt(content)), f.read())
 
         # Clean up the private key we imported here, leave the public key to be

@@ -1,6 +1,6 @@
 from __future__ import with_statement
 
-from os.path import basename
+from email.mime.base import MIMEBase
 
 from django.core.mail.backends.console import EmailBackend as ConsoleBackend
 from django.core.mail.backends.locmem import EmailBackend as LocmemBackend
@@ -8,7 +8,6 @@ from django.core.mail.backends.filebased import EmailBackend as FileBackend
 from django.core.mail.backends.smtp import EmailBackend as SmtpBackend
 from django.core.mail.message import EmailMultiAlternatives
 from django.utils.encoding import smart_text
-from django.utils import six
 
 from .handlers import (handle_failed_message_encryption,
                        handle_failed_alternative_encryption,
@@ -48,16 +47,14 @@ def encrypt(text, addr):
 
 
 def encrypt_attachment(address, attachment, use_asc):
-    # Attachments can either just be filenames or a
+    # An attachment can be either a MIMEBase object or a
     # (filename, content, mimetype) triple
-    if isinstance(attachment, six.string_types):
-        filename = basename(attachment)
-        mimetype = None
-
-        # If the attachment is just a filename, open the file,
-        # encrypt it, and attach it
-        with open(attachment, "rb") as f:
-            content = f.read()
+    if isinstance(attachment, MIMEBase):
+        # If the attachment is already read into a MIMEBase subclass, pull
+        # out the filename, contents, and mimetype
+        filename = attachment.get_filename()
+        content = str(attachment.get_payload())
+        mimetype = attachment['Content-Type']
     else:
         # Unpack attachment tuple
         filename, content, mimetype = attachment
