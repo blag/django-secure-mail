@@ -1,5 +1,3 @@
-from __future__ import with_statement
-
 from email.mime.base import MIMEBase
 
 from django.core.mail.backends.console import EmailBackend as ConsoleBackend
