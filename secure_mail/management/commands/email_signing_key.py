@@ -70,8 +70,11 @@ class Command(LabelCommand):
         if options.get('generate') and labels:
             raise CommandError("You cannot specify fingerprints and "
                                "--generate when running this command")
-
+        if options.get('generate') and not SIGNING_KEY_DATA["Passphrase"])
+            raise CommandError("SIGNING_KEY_DATA needs Passphrase")
+            
         if options.get('generate'):
+            
             signing_key_cmd = gpg.gen_key_input(**SIGNING_KEY_DATA)
             new_signing_key = gpg.gen_key(signing_key_cmd)
 
@@ -101,8 +104,10 @@ class Command(LabelCommand):
         output = ''
 
         if options.get('print_private_key'):
-            output += gpg.export_keys([self.key.fingerprint], True)
-
+            try:
+                output += gpg.export_keys([self.key.fingerprint], True, passphrase=SIGNING_KEY_DATA["Passphrase"])
+            except:
+                raise CommandError("SIGNING_KEY_DATA needs to have a Passphrase asigned")
         # If we havne't been told to do anything else, print out the public
         # signing key
         if options.get('generate') or (not options.get('keyservers') and
