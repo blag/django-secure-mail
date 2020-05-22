@@ -21,6 +21,7 @@ install:
 before_script:
   # Make sure we have gpg installed; this also logs the version of GPG
   - gpg --version
+  - mkdir gpg_keyring
 script:
   - flake8 secure_mail --exclude=secure_mail/migrations
   - coverage run manage.py migrate
