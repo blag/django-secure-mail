@@ -3,45 +3,14 @@ sudo: false
 language: python
 
 env:
-  - DJANGO_VERSION="Django>=1.8,<1.9"
-  - DJANGO_VERSION="Django>=1.9,<1.10"
-  - DJANGO_VERSION="Django>=1.10,<1.11"
-  - DJANGO_VERSION="Django>=1.11,<2.0"
   - DJANGO_VERSION="Django>=2.0,<2.1"
+  - DJANGO_VERSION="Django>=3.0,<3.1"
   - DJANGO_VERSION='https://github.com/django/django/archive/master.tar.gz'
 python:
-  - "2.7"
-  - "3.4"
-  - "3.5"
   - "3.6"
-  # - "3.7"
+  - "3.7"
+  - "3.8"
 matrix:
-  exclude:
-    - python: "3.6"
-      env: DJANGO_VERSION="Django>=1.8,<1.9"
-    - python: "3.6"
-      env: DJANGO_VERSION="Django>=1.9,<1.10"
-    - python: "3.6"
-      env: DJANGO_VERSION="Django>=1.10,<1.11"
-
-    # - python: "3.7"
-    #   env: DJANGO_VERSION="Django>=1.8,<1.9"
-    # - python: "3.7"
-    #   env: DJANGO_VERSION="Django>=1.9,<1.10"
-    # - python: "3.7"
-    #   env: DJANGO_VERSION="Django>=1.10,<1.11"
-    # - python: "3.7"
-    #   env: DJANGO_VERSION="Django>=2.0,<2.1"
-
-    # Django 2.0 won't support Python 2.x anymore
-    - python: "2.7"
-      env: DJANGO_VERSION="Django>=2.0,<2.1"
-
-    # Django 2.1 won't support Python 3.4 anymore
-    - python: "2.7"
-      env: DJANGO_VERSION='https://github.com/django/django/archive/master.tar.gz'
-    - python: "3.4"
-      env: DJANGO_VERSION='https://github.com/django/django/archive/master.tar.gz'
   allow_failures:
     - env: DJANGO_VERSION='https://github.com/django/django/archive/master.tar.gz'
 
@@ -52,6 +21,7 @@ install:
 before_script:
   # Make sure we have gpg installed; this also logs the version of GPG
   - gpg --version
+  - mkdir gpg_keyring
 script:
   - flake8 secure_mail --exclude=secure_mail/migrations
   - coverage run manage.py migrate

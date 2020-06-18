@@ -1,13 +1,9 @@
-from __future__ import unicode_literals
-
 from django.db import models
-from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
 from secure_mail.utils import addresses_for_key, get_gpg
 
 
-@python_2_unicode_compatible
 class Key(models.Model):
     """
     Accepts a key and imports it via admin's save_model which
@@ -51,7 +47,6 @@ class Key(models.Model):
             address.save()
 
 
-@python_2_unicode_compatible
 class Address(models.Model):
     """
     Stores the address for a successfully imported key and allows

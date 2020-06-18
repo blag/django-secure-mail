@@ -1,8 +1,6 @@
 """
 Script to generate and upload a signing key to keyservers
 """
-from __future__ import print_function
-
 import argparse
 
 from django.core.management.base import LabelCommand, CommandError
