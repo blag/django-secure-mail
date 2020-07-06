@@ -2,6 +2,7 @@
 Script to generate and upload a signing key to keyservers
 """
 import argparse
+import warnings
 
 from django.core.management.base import LabelCommand, CommandError
 from django.utils.translation import ugettext as _
@@ -44,6 +45,9 @@ class Command(LabelCommand):
             dest='generate',
             help=_("Generate a new signing key"))
         parser.add_argument(
+            '--passphrase',
+            help=_("Passphrase for the private signing key"))
+        parser.add_argument(
             '--print-private-key',
             action='store_true',
             default=False,
@@ -69,7 +73,15 @@ class Command(LabelCommand):
             raise CommandError("You cannot specify fingerprints and "
                                "--generate when running this command")
 
+        if gpg.version > (2,):
+            if options.get('generate'):
+                if not options.get('passphrase'):
+                    warnings.warn(_("You may need to specify a passphrase with "
+                                    "--passphrase when using GnuPG >= 2"))
+
         if options.get('generate'):
+            if options.get('passphrase'):
+                SIGNING_KEY_DATA['passphrase'] = options.get('passphrase')
             signing_key_cmd = gpg.gen_key_input(**SIGNING_KEY_DATA)
             new_signing_key = gpg.gen_key(signing_key_cmd)
 
@@ -98,7 +110,13 @@ class Command(LabelCommand):
         output = ''
 
         if options.get('print_private_key'):
-            output += gpg.export_keys([self.key.fingerprint], secret=True)
+            gpg_kwargs = {}
+            if options.get('passphrase'):
+                gpg_kwargs['passphrase'] = options.get('passphrase')
+            elif gpg.version > (2,):
+                warnings.warn(_("You may need to specify a passphrase with "
+                                "--passphrase when using GnuPG >= 2"))
+            output += gpg.export_keys([self.key.fingerprint], secret=True, **gpg_kwargs)
 
         # If we havne't been told to do anything else, print out the public
         # signing key

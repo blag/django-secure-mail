@@ -18,7 +18,7 @@ class TestEmailSigningKeyCommandTestCase(TestCase):
 
         self.assertEquals(Key.objects.count(), 0)
 
-        call_command('email_signing_key', '--generate',
+        call_command('email_signing_key', '--generate', '--passphrase', '""',
                      stdout=out, stderr=err)
 
         key_data = out.getvalue().strip().split('\n')

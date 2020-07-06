@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
+from secure_mail.settings import SIGNING_KEY_PASSPHRASE
 from secure_mail.utils import addresses_for_key, get_gpg
 
 
@@ -72,6 +73,7 @@ class Address(models.Model):
         gpg = get_gpg()
         for key in gpg.list_keys():
             if self.address in addresses_for_key(gpg, key):
-                gpg.delete_keys(key["fingerprint"], secret=True)
+                gpg.delete_keys(key["fingerprint"], secret=True,
+                                passphrase=SIGNING_KEY_PASSPHRASE)
                 gpg.delete_keys(key["fingerprint"])
         super(Address, self).delete()

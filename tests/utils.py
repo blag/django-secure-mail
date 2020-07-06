@@ -7,7 +7,7 @@ from django.core import mail
 from django.utils.safestring import mark_safe
 
 from secure_mail.models import Key
-
+from secure_mail.settings import SIGNING_KEY_PASSPHRASE
 from secure_mail.utils import get_gpg, EncryptionFailedError
 
 # Generated with:
@@ -25,7 +25,7 @@ from secure_mail.utils import get_gpg, EncryptionFailedError
 # public_fp = key.fingerprint
 # private_key = gpg.export_keys(key.fingerprint, secret=True, armor=True)
 # public_key = gpg.export_keys(key.fingerprint, armor=True)
-# # gpg.delete_keys([private_fp], secret=True)
+# # gpg.delete_keys([private_fp], secret=True, passphrase=SIGNING_KEY_PASSPHRASE)
 # gpg.delete_keys([public_fp])
 # print('TEST_KEY_FINGERPRINT = f"{public_fp}"')
 # print('TEST_PRIVATE_KEY = f"""\n{private_key}"""')
@@ -177,7 +177,7 @@ class KeyMixin(GPGMixin):
 class DeleteAllKeysMixin(GPGMixin):
     def delete_all_keys(self):
         self.gpg.delete_keys([k['fingerprint'] for k in self.gpg.list_keys()],
-                             secret=True)
+                             secret=True, passphrase=SIGNING_KEY_PASSPHRASE)
         self.gpg.delete_keys([k['fingerprint'] for k in self.gpg.list_keys()])
 
 
@@ -255,7 +255,8 @@ class SendMailMixin(KeyMixin, SendMailFunctionMixin):
         # Clean up the private key we imported here, leave the public key to be
         # cleaned up by tearDownClass
         delete_result = self.gpg.delete_keys(
-            TEST_KEY_FINGERPRINT, secret=True)
+            TEST_KEY_FINGERPRINT, secret=True,
+            passphrase=SIGNING_KEY_PASSPHRASE)
 
         self.assertEquals(str(delete_result), 'ok')
 
@@ -318,7 +319,8 @@ class SendMailMixin(KeyMixin, SendMailFunctionMixin):
         # Clean up the private key we imported here, leave the public key to be
         # cleaned up by tearDownClass
         delete_result = self.gpg.delete_keys(
-            TEST_KEY_FINGERPRINT, secret=True)
+            TEST_KEY_FINGERPRINT, secret=True,
+            passphrase=SIGNING_KEY_PASSPHRASE)
 
         self.assertEquals(str(delete_result), 'ok')
 
@@ -405,7 +407,8 @@ class SendMailMixin(KeyMixin, SendMailFunctionMixin):
         # Clean up the private key we imported here, leave the public key to be
         # cleaned up by tearDownClass
         delete_result = self.gpg.delete_keys(
-            TEST_KEY_FINGERPRINT, secret=True)
+            TEST_KEY_FINGERPRINT, secret=True,
+            passphrase=SIGNING_KEY_PASSPHRASE)
 
         self.assertEquals(str(delete_result), 'ok')
 
@@ -462,7 +465,8 @@ class SendMailMixin(KeyMixin, SendMailFunctionMixin):
         # Clean up the private key we imported here, leave the public key to be
         # cleaned up by tearDownClass
         delete_result = self.gpg.delete_keys(
-            TEST_KEY_FINGERPRINT, secret=True)
+            TEST_KEY_FINGERPRINT, secret=True,
+            passphrase=SIGNING_KEY_PASSPHRASE)
 
         self.assertEquals(str(delete_result), 'ok')
 
@@ -520,7 +524,8 @@ class SendMailMixin(KeyMixin, SendMailFunctionMixin):
         # Clean up the private key we imported here, leave the public key to be
         # cleaned up by tearDownClass
         delete_result = self.gpg.delete_keys(
-            TEST_KEY_FINGERPRINT, secret=True)
+            TEST_KEY_FINGERPRINT, secret=True,
+            passphrase=SIGNING_KEY_PASSPHRASE)
 
         self.assertEquals(str(delete_result), 'ok')
 
@@ -579,7 +584,8 @@ class SendMailMixin(KeyMixin, SendMailFunctionMixin):
         # Clean up the private key we imported here, leave the public key to be
         # cleaned up by tearDownClass
         delete_result = self.gpg.delete_keys(
-            TEST_KEY_FINGERPRINT, secret=True)
+            TEST_KEY_FINGERPRINT, secret=True,
+            passphrase=SIGNING_KEY_PASSPHRASE)
 
         self.assertEquals(str(delete_result), 'ok')
 
@@ -668,6 +674,7 @@ class SendMailMixin(KeyMixin, SendMailFunctionMixin):
         # Clean up the private key we imported here, leave the public key to be
         # cleaned up by tearDownClass
         delete_result = self.gpg.delete_keys(
-            TEST_KEY_FINGERPRINT, secret=True)
+            TEST_KEY_FINGERPRINT, secret=True,
+            passphrase=SIGNING_KEY_PASSPHRASE)
 
         self.assertEquals(str(delete_result), 'ok')

@@ -1,7 +1,8 @@
 from gnupg import GPG
 
 from secure_mail.settings import (ALWAYS_TRUST, GNUPG_ENCODING, GNUPG_HOME,
-                                  SIGNING_KEY_FINGERPRINT)
+                                  SIGNING_KEY_FINGERPRINT,
+                                  SIGNING_KEY_PASSPHRASE)
 
 
 # Used internally
@@ -9,6 +10,8 @@ encrypt_kwargs = {
     'always_trust': ALWAYS_TRUST,
     'sign': SIGNING_KEY_FINGERPRINT,
 }
+
+delete_kwargs = {'passphrase': SIGNING_KEY_PASSPHRASE}
 
 
 def get_gpg():

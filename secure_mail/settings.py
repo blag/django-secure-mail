@@ -35,6 +35,7 @@ FAILURE_HANDLERS = {
 }
 FAILURE_HANDLERS.update(getattr(settings, "SECURE_MAIL_FAILURE_HANDLERS", {}))
 GNUPG_ENCODING = getattr(settings, "SECURE_MAIL_GNUPG_ENCODING", None)
+SIGNING_KEY_PASSPHRASE = getattr(settings, "SECURE_MAIL_SIGNING_KEY_PASSPHRASE", '')
 SIGNING_KEY_DATA = {
     'key_type': "RSA",
     'key_length': 4096,
@@ -42,6 +43,7 @@ SIGNING_KEY_DATA = {
     'name_comment': "Outgoing email server",
     'name_email': settings.DEFAULT_FROM_EMAIL,
     'expire_date': '2y',
+    'passphrase': SIGNING_KEY_PASSPHRASE,
 }
 SIGNING_KEY_DATA.update(getattr(settings, "SECURE_MAIL_SIGNING_KEY_DATA", {}))
 SIGNING_KEY_FINGERPRINT = getattr(
