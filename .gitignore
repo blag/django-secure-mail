@@ -6,4 +6,5 @@ tests/mail.txt
 
 dist/
 gpg_keyring/
+gpg_keyring*/
 htmlcov/
