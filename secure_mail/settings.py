@@ -9,7 +9,7 @@ from django.conf import settings
 # DEFAULT_SIGNING_KEY_DATA = {
 #     'key_type': "RSA",
 #     'key_length': 4096,
-#     'name_real': settings.SITE_NAME,
+#     'name_real': getattr(settings, 'SITE_NAME', ''),
 #     'name_comment': "Outgoing email server",
 #     'name_email': settings.DEFAULT_FROM_EMAIL,
 #     'expire_date': '2y',
@@ -39,7 +39,7 @@ SIGNING_KEY_PASSPHRASE = getattr(settings, "SECURE_MAIL_SIGNING_KEY_PASSPHRASE",
 SIGNING_KEY_DATA = {
     'key_type': "RSA",
     'key_length': 4096,
-    'name_real': settings.SITE_NAME,
+    'name_real': getattr(settings, 'SITE_NAME', ''),
     'name_comment': "Outgoing email server",
     'name_email': settings.DEFAULT_FROM_EMAIL,
     'expire_date': '2y',
