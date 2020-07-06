@@ -72,6 +72,6 @@ class Address(models.Model):
         gpg = get_gpg()
         for key in gpg.list_keys():
             if self.address in addresses_for_key(gpg, key):
-                gpg.delete_keys(key["fingerprint"], True)
+                gpg.delete_keys(key["fingerprint"], secret=True)
                 gpg.delete_keys(key["fingerprint"])
         super(Address, self).delete()

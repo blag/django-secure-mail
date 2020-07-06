@@ -98,7 +98,7 @@ class Command(LabelCommand):
         output = ''
 
         if options.get('print_private_key'):
-            output += gpg.export_keys([self.key.fingerprint], True)
+            output += gpg.export_keys([self.key.fingerprint], secret=True)
 
         # If we havne't been told to do anything else, print out the public
         # signing key

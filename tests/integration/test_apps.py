@@ -42,7 +42,7 @@ class NoBadSigningKeyErrorTestCase(GPGMixin, TestCase):
 
     def tearDown(self):
         super(NoBadSigningKeyErrorTestCase, self).tearDown()
-        self.gpg.delete_keys(TEST_KEY_FINGERPRINT, True)
+        self.gpg.delete_keys(TEST_KEY_FINGERPRINT, secret=True)
         self.gpg.delete_keys(TEST_KEY_FINGERPRINT)
 
     def test_successful_check(self):
@@ -79,7 +79,7 @@ class BadSigningKeyErrorTestCase(GPGMixin, TestCase):
 
     def tearDown(self):
         super(BadSigningKeyErrorTestCase, self).tearDown()
-        self.gpg.delete_keys(TEST_KEY_FINGERPRINT, True)
+        self.gpg.delete_keys(TEST_KEY_FINGERPRINT, secret=True)
         self.gpg.delete_keys(TEST_KEY_FINGERPRINT)
 
     def test_unsuccessful_check(self):
