@@ -1,3 +1,4 @@
+# noqa: E501
 """
 Script to generate and upload a signing key to keyservers
 """
