@@ -28,12 +28,17 @@ setup(
     zip_safe=False,
     include_package_data=True,
     install_requires=[
+        "django",
         "python-gnupg"
     ],
     extras_require={
         'dev': [
             "sphinx-me",
-        ]
+        ],
+        'test': [
+            "coverage",
+            "flake8",
+        ],
     },
     classifiers=[
         "Development Status :: 5 - Production/Stable",
