@@ -27,9 +27,9 @@ from secure_mail.utils import get_gpg, EncryptionFailedError
 # public_key = gpg.export_keys(key.fingerprint, armor=True)
 # # gpg.delete_keys([private_fp], True)
 # gpg.delete_keys([public_fp])
-# print('TEST_KEY_FINGERPRINT = "{}"'.format(public_fp))
-# print('TEST_PRIVATE_KEY = """\n{}"""'.format(private_key))
-# print('TEST_PUBLIC_KEY = """\n{}"""'.format(public_key))
+# print('TEST_KEY_FINGERPRINT = f"{public_fp}"')
+# print('TEST_PRIVATE_KEY = f"""\n{private_key}"""')
+# print('TEST_PUBLIC_KEY = f"""\n{public_key}"""')
 #
 TEST_KEY_FINGERPRINT = "27011D34B2A200A3367C23C450CF2FB1F5C0624D"
 TEST_PRIVATE_KEY = """

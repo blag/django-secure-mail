@@ -1,10 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.test.client import RequestFactory
-try:
-    from django.urls import reverse
-except ImportError:
-    from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 
 class AdminTestCase(TestCase):

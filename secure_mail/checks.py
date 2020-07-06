@@ -20,14 +20,14 @@ def check_signing_key(app_configs, **kwargs):
         except (AttributeError, KeyError):
             errors = [
                 Error("The key specified by the "
-                      "SECURE_MAIL_SIGNING_KEY_FINGERPRINT setting ({fp}) "
-                      "does not exist in the GPG keyring.".format(
-                          fp=SIGNING_KEY_FINGERPRINT),
+                      "SECURE_MAIL_SIGNING_KEY_FINGERPRINT setting "
+                      f"({SIGNING_KEY_FINGERPRINT}) "
+                      "does not exist in the GPG keyring.",
                       hint="Adjust the SECURE_MAIL_GNUPG_HOME setting "
-                           "(currently set to {gnupg_home}, correct the key "
+                           f"(currently set to {GNUPG_HOME}, correct the key "
                            "fingerprint, or generate a new key by running "
                            "python manage.py email_signing_key --generate "
-                           "to fix.".format(gnupg_home=GNUPG_HOME),
+                           "to fix.",
                       id='secure_mail.E0001')
             ]
     return errors

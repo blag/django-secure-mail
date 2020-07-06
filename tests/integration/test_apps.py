@@ -10,10 +10,7 @@ from tests.utils import (
     GPGMixin, TEST_PRIVATE_KEY, TEST_KEY_FINGERPRINT,
 )
 
-if sys.version_info < (3, 0):
-    from io import BytesIO as StringIO
-else:
-    from io import StringIO
+from io import StringIO
 
 
 MODIFIED_FINGERPRINT = "{}{}".format(

@@ -8,20 +8,10 @@ from secure_mail.models import Key
 
 from tests.utils import TEST_KEY_FINGERPRINT
 
-if sys.version_info < (3,):
-    from io import BytesIO as StringIO
-else:
-    from io import StringIO
+from io import StringIO
 
 
 class TestEmailSigningKeyCommandTestCase(TestCase):
-    @classmethod
-    def setUpClass(cls):
-        super(TestEmailSigningKeyCommandTestCase, cls).setUpClass()
-        if sys.version_info < (3,):
-            cls.assertRegex = cls.assertRegexpMatches
-            cls.assertRaisesRegex = cls.assertRaisesRegexp
-
     def _generate_signing_key(self):
         out = StringIO()
         err = StringIO()
@@ -33,10 +23,7 @@ class TestEmailSigningKeyCommandTestCase(TestCase):
 
         key_data = out.getvalue().strip().split('\n')
 
-        # For Python 3 we can jsut do fp, header, *blocks, footer = key_data
-        fp, header = key_data[0:2]
-        blocks = key_data[2:-1]
-        footer = key_data[-1]
+        fp, header, *blocks, footer = key_data
 
         self.assertRegex(fp, r'^[0-9A-F]{40}$')
         self.assertEquals(header, "-----BEGIN PGP PUBLIC KEY BLOCK-----")
@@ -48,10 +35,7 @@ class TestEmailSigningKeyCommandTestCase(TestCase):
 
         key = Key.objects.get()
 
-        # For Python 3.5+ we can just do key_data = [header, *blocks, footer]
-        key_data = [header]
-        key_data.extend(blocks)
-        key_data.append(footer)
+        key_data = [header, *blocks, footer]
 
         self.assertEquals(key.key.strip(), '\n'.join(key_data))
 
@@ -77,13 +61,11 @@ class TestEmailSigningKeyCommandTestCase(TestCase):
         print_err = StringIO()
 
         call_command('email_signing_key', self.fp, '--print-private-key',
+                     '--passphrase', '""',
                      stdout=print_out, stderr=print_err)
 
         print_private_key_data = print_out.getvalue().strip().split('\n')
-        # In Python 3 we can just do:
-        # header, version, *_, footer = print_private_key_data
-        header, version = print_private_key_data[0:2]
-        footer = print_private_key_data[-1]
+        header, version, *_, footer = print_private_key_data
 
         # The "Version" header key is not required:
         # https://security.stackexchange.com/a/46609

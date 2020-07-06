@@ -79,8 +79,7 @@ class Command(LabelCommand):
             self.key = Key.objects.create(key=exported_signing_key,
                                           use_asc=False)
             labels = [self.key.fingerprint]
-
-            output += "{fp}\n".format(fp=self.key.fingerprint)
+            output += f"{self.key.fingerprint}\n"
 
         output += super(Command, self).handle(*labels, **options)
 
