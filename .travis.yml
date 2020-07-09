@@ -1,18 +1,29 @@
 sudo: false
 
+dist: bionic
 language: python
 
+addons:
+  apt:
+    packages:
+      - gnupg1
+      - gnupg2  # For bionic and later, can just be gnupg
+
 env:
-  - DJANGO_VERSION="Django>=2.0,<2.1"
-  - DJANGO_VERSION="Django>=3.0,<3.1"
-  - DJANGO_VERSION='https://github.com/django/django/archive/master.tar.gz'
+  - GNUPG_BINARY=/usr/bin/gpg1 DJANGO_VERSION="Django>=2.0,<2.1"
+  - GNUPG_BINARY=/usr/bin/gpg2 DJANGO_VERSION="Django>=2.0,<2.1"
+  - GNUPG_BINARY=/usr/bin/gpg1 DJANGO_VERSION="Django>=3.0,<3.1"
+  - GNUPG_BINARY=/usr/bin/gpg2 DJANGO_VERSION="Django>=3.0,<3.1"
+  - GNUPG_BINARY=/usr/bin/gpg1 DJANGO_VERSION='https://github.com/django/django/archive/master.tar.gz'
+  - GNUPG_BINARY=/usr/bin/gpg2 DJANGO_VERSION='https://github.com/django/django/archive/master.tar.gz'
 python:
   - "3.6"
   - "3.7"
   - "3.8"
 matrix:
   allow_failures:
-    - env: DJANGO_VERSION='https://github.com/django/django/archive/master.tar.gz'
+    - env: GNUPG_BINARY=/usr/bin/gpg1 DJANGO_VERSION='https://github.com/django/django/archive/master.tar.gz'
+    - env: GNUPG_BINARY=/usr/bin/gpg2 DJANGO_VERSION='https://github.com/django/django/archive/master.tar.gz'
 
 install:
   - pip install coverage coveralls flake8 python-gnupg

@@ -1,6 +1,7 @@
 from gnupg import GPG
 
-from secure_mail.settings import (ALWAYS_TRUST, GNUPG_ENCODING, GNUPG_HOME,
+from secure_mail.settings import (ALWAYS_TRUST,
+                                  GNUPG_BINARY, GNUPG_ENCODING, GNUPG_HOME,
                                   SIGNING_KEY_FINGERPRINT,
                                   SIGNING_KEY_PASSPHRASE)
 
@@ -15,7 +16,7 @@ delete_kwargs = {'passphrase': SIGNING_KEY_PASSPHRASE}
 
 
 def get_gpg():
-    gpg = GPG(gnupghome=GNUPG_HOME)
+    gpg = GPG(gpgbinary=GNUPG_BINARY, gnupghome=GNUPG_HOME)
     if GNUPG_ENCODING is not None:
         gpg.encoding = GNUPG_ENCODING
     return gpg

@@ -24,6 +24,7 @@ from django.conf import settings
 # DEFAULT_SETTINGS['USE_GNUPG'] = DEFAULT_SETTINGS['GNUPG_HOME'] is not None
 
 
+GNUPG_BINARY = getattr(settings, "SECURE_MAIL_GNUPG_BINARY", None)
 GNUPG_HOME = getattr(settings, "SECURE_MAIL_GNUPG_HOME", None)
 USE_GNUPG = getattr(settings, "SECURE_MAIL_USE_GNUPG", GNUPG_HOME is not None)
 
