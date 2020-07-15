@@ -76,7 +76,7 @@ class Command(LabelCommand):
         if options.get('generate'):
             if options.get('passphrase'):
                 SIGNING_KEY_DATA['passphrase'] = options.get('passphrase')
-            elif gpg.version > (2,):
+            elif gpg.version > (2,):  # pragma: nocover
                 warnings.warn(_("You may need to specify a passphrase with "
                                 "--passphrase when using GnuPG >= 2"))
             signing_key_cmd = gpg.gen_key_input(**SIGNING_KEY_DATA)
@@ -110,7 +110,7 @@ class Command(LabelCommand):
             gpg_kwargs = {}
             if options.get('passphrase'):
                 gpg_kwargs['passphrase'] = options.get('passphrase')
-            elif gpg.version > (2,):
+            elif gpg.version > (2,):  # pragma: nocover
                 warnings.warn(_("You may need to specify a passphrase with "
                                 "--passphrase when using GnuPG >= 2"))
             output += gpg.export_keys([self.key.fingerprint], secret=True, **gpg_kwargs)
