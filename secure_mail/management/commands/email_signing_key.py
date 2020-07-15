@@ -73,15 +73,12 @@ class Command(LabelCommand):
             raise CommandError("You cannot specify fingerprints and "
                                "--generate when running this command")
 
-        if gpg.version > (2,):
-            if options.get('generate'):
-                if not options.get('passphrase'):
-                    warnings.warn(_("You may need to specify a passphrase with "
-                                    "--passphrase when using GnuPG >= 2"))
-
         if options.get('generate'):
             if options.get('passphrase'):
                 SIGNING_KEY_DATA['passphrase'] = options.get('passphrase')
+            elif gpg.version > (2,):
+                warnings.warn(_("You may need to specify a passphrase with "
+                                "--passphrase when using GnuPG >= 2"))
             signing_key_cmd = gpg.gen_key_input(**SIGNING_KEY_DATA)
             new_signing_key = gpg.gen_key(signing_key_cmd)
 
