@@ -16,7 +16,12 @@ delete_kwargs = {'passphrase': SIGNING_KEY_PASSPHRASE}
 
 
 def get_gpg():
-    gpg = GPG(gpgbinary=GNUPG_BINARY, gnupghome=GNUPG_HOME)
+    gpg_kwargs = {
+        'gnupghome': GNUPG_HOME,
+    }
+    if GNUPG_BINARY:
+        gpg_kwargs['gpgbinary'] = GNUPG_BINARY
+    gpg = GPG(**gpg_kwargs)
     if GNUPG_ENCODING is not None:
         gpg.encoding = GNUPG_ENCODING
     return gpg
