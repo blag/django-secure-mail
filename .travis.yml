@@ -10,20 +10,25 @@ addons:
       - gnupg2  # For bionic and later, can just be gnupg
 
 env:
-  - GNUPG_BINARY=/usr/bin/gpg1 DJANGO_VERSION="Django>=2.0,<2.1"
-  - GNUPG_BINARY=/usr/bin/gpg2 DJANGO_VERSION="Django>=2.0,<2.1"
-  - GNUPG_BINARY=/usr/bin/gpg1 DJANGO_VERSION="Django>=3.0,<3.1"
-  - GNUPG_BINARY=/usr/bin/gpg2 DJANGO_VERSION="Django>=3.0,<3.1"
-  - GNUPG_BINARY=/usr/bin/gpg1 DJANGO_VERSION='https://github.com/django/django/archive/master.tar.gz'
-  - GNUPG_BINARY=/usr/bin/gpg2 DJANGO_VERSION='https://github.com/django/django/archive/master.tar.gz'
+  # The gpg2 executable is symlinked to the gpg executable
+  # (which seems backwards from what it should be, but I digress...)
+  # so we don't need to explicitly specify the GNUPG_BINARY setting,
+  # and we also want to ensure that the code works without that setting
+  # explicitly set (to bump coverage results without excluding that code).
+  - DJANGO_VERSION="Django>=2.0,<2.1" GNUPG_BINARY=/usr/bin/gpg1
+  - DJANGO_VERSION="Django>=2.0,<2.1"
+  - DJANGO_VERSION="Django>=3.0,<3.1" GNUPG_BINARY=/usr/bin/gpg1
+  - DJANGO_VERSION="Django>=3.0,<3.1"
+  - DJANGO_VERSION='https://github.com/django/django/archive/master.tar.gz' GNUPG_BINARY=/usr/bin/gpg1
+  - DJANGO_VERSION='https://github.com/django/django/archive/master.tar.gz'
 python:
   - "3.6"
   - "3.7"
   - "3.8"
 matrix:
   allow_failures:
-    - env: GNUPG_BINARY=/usr/bin/gpg1 DJANGO_VERSION='https://github.com/django/django/archive/master.tar.gz'
-    - env: GNUPG_BINARY=/usr/bin/gpg2 DJANGO_VERSION='https://github.com/django/django/archive/master.tar.gz'
+    - env: DJANGO_VERSION='https://github.com/django/django/archive/master.tar.gz' GNUPG_BINARY=/usr/bin/gpg1
+    - env: DJANGO_VERSION='https://github.com/django/django/archive/master.tar.gz'
 
 install:
   - pip install coverage coveralls flake8 python-gnupg
@@ -31,7 +36,7 @@ install:
 
 before_script:
   # Make sure we have gpg installed; this also logs the version of GPG
-  - gpg --version
+  - ${GNUPG_BINARY:-gpg} --version
   - mkdir gpg_keyring
 script:
   - flake8 secure_mail --exclude=secure_mail/migrations
