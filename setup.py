@@ -33,7 +33,9 @@ setup(
     ],
     extras_require={
         'dev': [
+            "check-manifest",
             "sphinx-me",
+            "twine",
         ],
         'test': [
             "coverage",
