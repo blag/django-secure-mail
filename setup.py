@@ -29,7 +29,7 @@ setup(
     include_package_data=True,
     install_requires=[
         "django",
-        "python-gnupg"
+        "python-gnupg",
     ],
     extras_require={
         'dev': [
