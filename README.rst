@@ -179,7 +179,7 @@ There are a few settings you can configure in your project's
   when generating or printing private signing keys. Defaults to ``''``.
 * ``SECURE_MAIL_SIGNING_KEY_DATA`` - A dictionary of key options for generating
   new signing keys. See the
-  `python-gnupg documentation https://pythonhosted.org/python-gnupg`_ for more
+  `python-gnupg documentation`_ for more
   details.
 
   Default:
