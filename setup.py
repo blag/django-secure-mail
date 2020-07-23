@@ -23,17 +23,20 @@ setup(
                 "encrypted and multipart emails using the Django templating "
                 "system.",
     long_description=open("README.rst").read(),
+    long_description_content_type='text/x-rst',
     url="https://github.com/blag/django-secure-mail",
     packages=find_packages(exclude=("tests",)),
     zip_safe=False,
     include_package_data=True,
     install_requires=[
         "django",
-        "python-gnupg"
+        "python-gnupg",
     ],
     extras_require={
         'dev': [
+            "check-manifest",
             "sphinx-me",
+            "twine",
         ],
         'test': [
             "coverage",
