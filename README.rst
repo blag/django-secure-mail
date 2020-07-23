@@ -175,6 +175,8 @@ There are a few settings you can configure in your project's
   keys are always fully trusted. This simply sets ``--always-trust`` (or
   ``--trust-model`` for more modern versions of GPG). See the GPG documentation
   on the ``--trust-model`` option for more detail about this setting.
+* ``SECURE_MAIL_SIGNING_KEY_PASSPHRASE`` - A passphrase that is passed to GPG
+  when generating or printing private signing keys. Defaults to ``''``.
 * ``SECURE_MAIL_SIGNING_KEY_DATA`` - A dictionary of key options for generating
   new signing keys. See the
   `python-gnupg documentation https://pythonhosted.org/python-gnupg`_ for more
@@ -187,10 +189,11 @@ There are a few settings you can configure in your project's
         {
             'key_type': "RSA",
             'key_length': 4096,
-            'name_real': settings.SITE_NAME,
+            'name_real': getattr(settings, 'SITE_NAME', ''),
             'name_comment': "Outgoing email server",
             'name_email': settings.DEFAULT_FROM_EMAIL,
             'expire_date': '2y',
+            'passphrase': settings.SECURE_MAIL_SIGNING_KEY_PASSPHRASE,
         }
 
 * ``SECURE_MAIL_KEY_FINGERPRINT`` - The fingerprint of the key to use when
