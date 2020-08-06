@@ -1,6 +1,6 @@
 
 from django import forms
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from secure_mail.models import Key
 from secure_mail.utils import get_gpg
