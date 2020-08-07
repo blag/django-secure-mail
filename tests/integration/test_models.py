@@ -22,27 +22,27 @@ class ModelFunctionTestCase(DeleteAllKeysMixin, TestCase):
         key.save()
 
         # Test Key.__str__()
-        self.assertEquals(str(key), TEST_KEY_FINGERPRINT)
+        self.assertEqual(str(key), TEST_KEY_FINGERPRINT)
 
         # Test Key.email_addresses property
-        self.assertEquals(key.email_addresses,
+        self.assertEqual(key.email_addresses,
                           'django-secure-mail@example.com')
 
         address = Address.objects.get(key=key)
 
         # Test Address.__str__()
-        self.assertEquals(str(address), 'django-secure-mail@example.com')
+        self.assertEqual(str(address), 'django-secure-mail@example.com')
 
-        self.assertEquals(address.address, 'django-secure-mail@example.com')
+        self.assertEqual(address.address, 'django-secure-mail@example.com')
 
         fp = key.fingerprint
-        self.assertEquals(fp, TEST_KEY_FINGERPRINT)
+        self.assertEqual(fp, TEST_KEY_FINGERPRINT)
 
         address.delete()
         key.delete()
 
-        self.assertEquals(Address.objects.count(), 0)
-        self.assertEquals(Key.objects.count(), 0)
+        self.assertEqual(Address.objects.count(), 0)
+        self.assertEqual(Key.objects.count(), 0)
 
     def test_address_delete_only_keys_matching_address(self):
         key = Key(key=TEST_PUBLIC_KEY, use_asc=False)
@@ -52,10 +52,10 @@ class ModelFunctionTestCase(DeleteAllKeysMixin, TestCase):
         self.gpg.gen_key(self.gpg.gen_key_input(**SIGNING_KEY_DATA))
 
         # Test Key.__str__()
-        self.assertEquals(str(key), TEST_KEY_FINGERPRINT)
+        self.assertEqual(str(key), TEST_KEY_FINGERPRINT)
 
         # Test Key.email_addresses property
-        self.assertEquals(key.email_addresses,
+        self.assertEqual(key.email_addresses,
                           'django-secure-mail@example.com')
 
         address = Address.objects.get(key=key)
@@ -63,11 +63,11 @@ class ModelFunctionTestCase(DeleteAllKeysMixin, TestCase):
         address.delete()
         key.delete()
 
-        self.assertEquals(Address.objects.count(), 0)
-        self.assertEquals(Key.objects.count(), 0)
+        self.assertEqual(Address.objects.count(), 0)
+        self.assertEqual(Key.objects.count(), 0)
 
-        self.assertEquals(len(self.gpg.list_keys()), 1)
+        self.assertEqual(len(self.gpg.list_keys()), 1)
 
         self.delete_all_keys()
 
-        self.assertEquals(len(self.gpg.list_keys()), 0)
+        self.assertEqual(len(self.gpg.list_keys()), 0)
