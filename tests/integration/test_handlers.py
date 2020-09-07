@@ -27,7 +27,7 @@ class GetVariableFromExceptionTestCase(TestCase):
         except Exception as e:
             val = get_variable_from_exception(e, 'parent_var')
 
-        self.assertEquals(val, 1)
+        self.assertEqual(val, 1)
 
     def test_get_variable_from_child(self):
         def child():
@@ -45,7 +45,7 @@ class GetVariableFromExceptionTestCase(TestCase):
         except Exception as e:
             val = get_variable_from_exception(e, 'child_var')
 
-        self.assertEquals(val, 2)
+        self.assertEqual(val, 2)
 
     def test_raise_key_error(self):
         def child():
@@ -72,7 +72,7 @@ class ForceDeleteKeyTestCase(KeyMixin, TestCase):
 
         force_delete_key(self.address)
 
-        self.assertEquals(len(self.gpg.list_keys()), 0)
+        self.assertEqual(len(self.gpg.list_keys()), 0)
 
 
 class ForceMailAdminsTestCase(TestCase):

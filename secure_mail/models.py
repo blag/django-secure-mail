@@ -1,5 +1,5 @@
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from secure_mail.settings import SIGNING_KEY_PASSPHRASE
 from secure_mail.utils import addresses_for_key, get_gpg

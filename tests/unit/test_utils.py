@@ -12,7 +12,7 @@ class GetGPGTestCase(TestCase):
             utils.GNUPG_ENCODING = previous_value
 
         # GPG.encoding is hard-coded to latin-1 in gnupg.py
-        self.assertEquals(gpg_obj.encoding, 'latin-1')
+        self.assertEqual(gpg_obj.encoding, 'latin-1')
 
     def test_get_gpg_specified_encoding(self):
         from secure_mail import utils
@@ -23,4 +23,4 @@ class GetGPGTestCase(TestCase):
         finally:
             utils.GNUPG_ENCODING = previous_value
 
-        self.assertEquals(gpg_obj.encoding, 'utf-8')
+        self.assertEqual(gpg_obj.encoding, 'utf-8')

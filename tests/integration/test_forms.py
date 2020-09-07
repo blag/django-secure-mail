@@ -25,9 +25,9 @@ class KeyFormTestCase(GPGMixin, TestCase):
             'use_asc': False,
         })
         self.assertTrue(form.is_valid())
-        self.assertEquals(form.cleaned_data['key'].strip(),
+        self.assertEqual(form.cleaned_data['key'].strip(),
                           TEST_PUBLIC_KEY.strip())
-        self.assertEquals(form.cleaned_data['use_asc'], False)
+        self.assertEqual(form.cleaned_data['use_asc'], False)
 
     def test_invalid_key_data(self):
         form = KeyForm(data={

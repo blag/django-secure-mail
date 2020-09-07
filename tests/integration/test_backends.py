@@ -61,16 +61,16 @@ class SendEncryptedMailBackendNoASCTestCase(SendMailMixin, TestCase):
 
         # Decrypt and test the alternatives later, just ensure we have
         # any alternatives at all so we fail quickly
-        self.assertNotEquals(message.alternatives, [])
-        self.assertEquals(message.attachments, [])
+        self.assertNotEqual(message.alternatives, [])
+        self.assertEqual(message.attachments, [])
 
         # We should only have one alternative - the txt message
-        self.assertEquals(len(message.alternatives), 1)
+        self.assertEqual(len(message.alternatives), 1)
 
         # Check the alternative to make sure it wasn't encrypted
         content, mimetype = message.alternatives[0]
-        self.assertEquals(mimetype, "application/gpg-encrypted")
-        self.assertEquals(content, alt)
+        self.assertEqual(mimetype, "application/gpg-encrypted")
+        self.assertEqual(content, alt)
 
     def test_handle_failed_alternative_encryption(self):
         msg_subject = "Test Subject"
@@ -141,15 +141,15 @@ class SendDoNotEncryptMailBackendTestCase(SendMailMixin, TestCase):
 
         message = mail.outbox[0]
 
-        self.assertEquals(message.subject, msg_subject)
+        self.assertEqual(message.subject, msg_subject)
         # We decrypt and test the message body below, these just ensure the
         # message body is not cleartext
-        self.assertEquals(message.body, msg_text)
-        self.assertEquals(message.to, to)
-        self.assertEquals(message.cc, [])
-        self.assertEquals(message.bcc, [])
-        self.assertEquals(message.reply_to, [])
-        self.assertEquals(message.from_email, from_email)
-        self.assertEquals(message.extra_headers, {})
-        self.assertEquals(message.alternatives, [])
-        self.assertEquals(message.attachments, [])
+        self.assertEqual(message.body, msg_text)
+        self.assertEqual(message.to, to)
+        self.assertEqual(message.cc, [])
+        self.assertEqual(message.bcc, [])
+        self.assertEqual(message.reply_to, [])
+        self.assertEqual(message.from_email, from_email)
+        self.assertEqual(message.extra_headers, {})
+        self.assertEqual(message.alternatives, [])
+        self.assertEqual(message.attachments, [])

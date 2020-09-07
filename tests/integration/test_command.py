@@ -16,7 +16,7 @@ class TestEmailSigningKeyCommandTestCase(TestCase):
         out = StringIO()
         err = StringIO()
 
-        self.assertEquals(Key.objects.count(), 0)
+        self.assertEqual(Key.objects.count(), 0)
 
         call_command('email_signing_key', '--generate', '--passphrase', '""',
                      stdout=out, stderr=err)
@@ -26,18 +26,18 @@ class TestEmailSigningKeyCommandTestCase(TestCase):
         fp, header, *blocks, footer = key_data
 
         self.assertRegex(fp, r'^[0-9A-F]{40}$')
-        self.assertEquals(header, "-----BEGIN PGP PUBLIC KEY BLOCK-----")
-        self.assertEquals(footer, "-----END PGP PUBLIC KEY BLOCK-----")
+        self.assertEqual(header, "-----BEGIN PGP PUBLIC KEY BLOCK-----")
+        self.assertEqual(footer, "-----END PGP PUBLIC KEY BLOCK-----")
 
-        self.assertEquals(err.getvalue(), '')
+        self.assertEqual(err.getvalue(), '')
 
-        self.assertEquals(Key.objects.count(), 1)
+        self.assertEqual(Key.objects.count(), 1)
 
         key = Key.objects.get()
 
         key_data = [header, *blocks, footer]
 
-        self.assertEquals(key.key.strip(), '\n'.join(key_data))
+        self.assertEqual(key.key.strip(), '\n'.join(key_data))
 
         self.fp = fp
 
@@ -47,7 +47,7 @@ class TestEmailSigningKeyCommandTestCase(TestCase):
 
         key.delete()
 
-        self.assertEquals(Key.objects.count(), 0)
+        self.assertEqual(Key.objects.count(), 0)
 
     def test_generated_signing_key(self):
         self._generate_signing_key()
@@ -70,12 +70,12 @@ class TestEmailSigningKeyCommandTestCase(TestCase):
         # The "Version" header key is not required:
         # https://security.stackexchange.com/a/46609
         # self.assertRegex(version, r'^Version: .*$')
-        self.assertEquals(header, "-----BEGIN PGP PRIVATE KEY BLOCK-----")
-        self.assertEquals(footer, "-----END PGP PRIVATE KEY BLOCK-----")
+        self.assertEqual(header, "-----BEGIN PGP PRIVATE KEY BLOCK-----")
+        self.assertEqual(footer, "-----END PGP PRIVATE KEY BLOCK-----")
 
-        self.assertEquals(print_err.getvalue(), '')
+        self.assertEqual(print_err.getvalue(), '')
 
-        self.assertEquals(Key.objects.count(), 1)
+        self.assertEqual(Key.objects.count(), 1)
 
         self._delete(Key.objects.get())
 
@@ -101,11 +101,11 @@ class TestEmailSigningKeyCommandTestCase(TestCase):
         call_command('email_signing_key', self.fp, '--keyserver', 'localhost',
                      stdout=upload_out, stderr=upload_err)
 
-        self.assertEquals(data['keyservers'], 'localhost')
-        self.assertEquals(data['fingerprint'], self.fp)
+        self.assertEqual(data['keyservers'], 'localhost')
+        self.assertEqual(data['fingerprint'], self.fp)
 
-        self.assertEquals(upload_out.getvalue(), '')
-        self.assertEquals(upload_err.getvalue(), '')
+        self.assertEqual(upload_out.getvalue(), '')
+        self.assertEqual(upload_err.getvalue(), '')
 
         email_signing_key.upload_keys = previous_value
 
@@ -118,14 +118,14 @@ class TestEmailSigningKeyCommandTestCase(TestCase):
         rgx = re.compile(r'^You cannot specify fingerprints and --generate '
                          r'when running this command$')
 
-        self.assertEquals(Key.objects.count(), 0)
+        self.assertEqual(Key.objects.count(), 0)
 
         with self.assertRaisesRegex(CommandError, rgx):
             call_command('email_signing_key', TEST_KEY_FINGERPRINT,
                          generate=True, stdout=out, stderr=err)
 
-        self.assertEquals(out.getvalue(), '')
-        self.assertEquals(err.getvalue(), '')
+        self.assertEqual(out.getvalue(), '')
+        self.assertEqual(err.getvalue(), '')
 
     def test_no_matching_fingerprint_raises_error(self):
         out = StringIO()
@@ -135,11 +135,11 @@ class TestEmailSigningKeyCommandTestCase(TestCase):
         rgx = re.compile(r'''^Key matching fingerprint '{fp}' not '''
                          r'''found.$'''.format(fp=missing_fingerprint))
 
-        self.assertEquals(Key.objects.count(), 0)
+        self.assertEqual(Key.objects.count(), 0)
 
         with self.assertRaisesRegex(CommandError, rgx):
             call_command('email_signing_key', missing_fingerprint,
                          stdout=out, stderr=err)
 
-        self.assertEquals(out.getvalue(), '')
-        self.assertEquals(err.getvalue(), '')
+        self.assertEqual(out.getvalue(), '')
+        self.assertEqual(err.getvalue(), '')

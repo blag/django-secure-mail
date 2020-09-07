@@ -226,15 +226,15 @@ class SendMailMixin(KeyMixin, SendMailFunctionMixin):
 
         message = mail.outbox[0]
 
-        self.assertEquals(message.subject, msg_subject)
+        self.assertEqual(message.subject, msg_subject)
         # We decrypt and test the message body below, these just ensure the
         # message body is not cleartext
-        self.assertNotEquals(message.body, "")
-        self.assertNotEquals(message.body, msg_text)
-        self.assertEquals(message.to, to)
-        self.assertEquals(message.from_email, from_email)
-        self.assertEquals(message.alternatives, [])
-        self.assertEquals(message.attachments, [])
+        self.assertNotEqual(message.body, "")
+        self.assertNotEqual(message.body, msg_text)
+        self.assertEqual(message.to, to)
+        self.assertEqual(message.from_email, from_email)
+        self.assertEqual(message.alternatives, [])
+        self.assertEqual(message.attachments, [])
 
         # Import the private key so we can decrypt the message body to test it
         import_result = self.gpg.import_keys(TEST_PRIVATE_KEY)
@@ -246,10 +246,10 @@ class SendMailMixin(KeyMixin, SendMailFunctionMixin):
         imported_key = keys.key_map[TEST_KEY_FINGERPRINT]
         fp = imported_key['fingerprint']
 
-        self.assertEquals(fp, TEST_KEY_FINGERPRINT)
+        self.assertEqual(fp, TEST_KEY_FINGERPRINT)
 
         # Decrypt and test it against the cleartext
-        self.assertEquals(str(self.gpg.decrypt(message.body)),
+        self.assertEqual(str(self.gpg.decrypt(message.body)),
                           msg_text)
 
         # Clean up the private key we imported here, leave the public key to be
@@ -258,7 +258,7 @@ class SendMailMixin(KeyMixin, SendMailFunctionMixin):
             TEST_KEY_FINGERPRINT, secret=True,
             passphrase=SIGNING_KEY_PASSPHRASE)
 
-        self.assertEquals(str(delete_result), 'ok')
+        self.assertEqual(str(delete_result), 'ok')
 
     def test_send_mail_function_txt_message_with_unencrypted_recipients(self):
         self.maxDiff = 10000
@@ -274,12 +274,12 @@ class SendMailMixin(KeyMixin, SendMailFunctionMixin):
 
         message = next(unencrypted_messages, None)
 
-        self.assertEquals(message.subject, msg_subject)
-        self.assertEquals(message.body, msg_text)
-        self.assertEquals(message.to, [to[1]])
-        self.assertEquals(message.from_email, from_email)
-        self.assertEquals(message.alternatives, [])
-        self.assertEquals(message.attachments, [])
+        self.assertEqual(message.subject, msg_subject)
+        self.assertEqual(message.body, msg_text)
+        self.assertEqual(message.to, [to[1]])
+        self.assertEqual(message.from_email, from_email)
+        self.assertEqual(message.alternatives, [])
+        self.assertEqual(message.attachments, [])
 
         self.assertIsNone(next(unencrypted_messages, None))
 
@@ -288,15 +288,15 @@ class SendMailMixin(KeyMixin, SendMailFunctionMixin):
 
         message = next(encrypted_messages, None)
 
-        self.assertEquals(message.subject, msg_subject)
+        self.assertEqual(message.subject, msg_subject)
         # We decrypt and test the message body below, these just ensure the
         # message body is not cleartext
-        self.assertNotEquals(message.body, "")
-        self.assertNotEquals(message.body, msg_text)
-        self.assertEquals(message.to, [to[0]])
-        self.assertEquals(message.from_email, from_email)
-        self.assertEquals(message.alternatives, [])
-        self.assertEquals(message.attachments, [])
+        self.assertNotEqual(message.body, "")
+        self.assertNotEqual(message.body, msg_text)
+        self.assertEqual(message.to, [to[0]])
+        self.assertEqual(message.from_email, from_email)
+        self.assertEqual(message.alternatives, [])
+        self.assertEqual(message.attachments, [])
 
         self.assertIsNone(next(encrypted_messages, None))
 
@@ -310,10 +310,10 @@ class SendMailMixin(KeyMixin, SendMailFunctionMixin):
         imported_key = keys.key_map[TEST_KEY_FINGERPRINT]
         fp = imported_key['fingerprint']
 
-        self.assertEquals(fp, TEST_KEY_FINGERPRINT)
+        self.assertEqual(fp, TEST_KEY_FINGERPRINT)
 
         # Decrypt and test it against the cleartext
-        self.assertEquals(str(self.gpg.decrypt(message.body)),
+        self.assertEqual(str(self.gpg.decrypt(message.body)),
                           msg_text)
 
         # Clean up the private key we imported here, leave the public key to be
@@ -322,7 +322,7 @@ class SendMailMixin(KeyMixin, SendMailFunctionMixin):
             TEST_KEY_FINGERPRINT, secret=True,
             passphrase=SIGNING_KEY_PASSPHRASE)
 
-        self.assertEquals(str(delete_result), 'ok')
+        self.assertEqual(str(delete_result), 'ok')
 
     def test_send_mail_function_txt_message_with_unencrypted_recipients_with_attachment_from_filename(self):  # noqa: E501
         self.maxDiff = 10000
@@ -341,39 +341,39 @@ class SendMailMixin(KeyMixin, SendMailFunctionMixin):
 
         message = next(unencrypted_messages, None)
 
-        self.assertEquals(message.subject, msg_subject)
-        self.assertEquals(message.body, msg_text)
-        self.assertEquals(message.to, [to[1]])
-        self.assertEquals(message.from_email, from_email)
-        self.assertEquals(message.alternatives, [])
-        self.assertNotEquals(message.attachments, [])
+        self.assertEqual(message.subject, msg_subject)
+        self.assertEqual(message.body, msg_text)
+        self.assertEqual(message.to, [to[1]])
+        self.assertEqual(message.from_email, from_email)
+        self.assertEqual(message.alternatives, [])
+        self.assertNotEqual(message.attachments, [])
 
         self.assertIsNone(next(unencrypted_messages, None))
 
         # We should only have one attachment - the HTML message
-        self.assertEquals(len(message.attachments), 1)
+        self.assertEqual(len(message.attachments), 1)
 
         # Check the mimetype, then decrypt the contents and compare it to the
         # cleartext
         filename, content, mimetype = message.attachments[0]
-        self.assertEquals(filename, 'file.txt')
-        self.assertEquals(mimetype, "text/html")
-        self.assertEquals(content, msg_html)
+        self.assertEqual(filename, 'file.txt')
+        self.assertEqual(mimetype, "text/html")
+        self.assertEqual(content, msg_html)
 
         # Grab the encrypted message
         encrypted_messages = (msg for msg in mail.outbox if to[0] in msg.to)
 
         message = next(encrypted_messages, None)
 
-        self.assertEquals(message.subject, msg_subject)
+        self.assertEqual(message.subject, msg_subject)
         # We decrypt and test the message body below, these just ensure the
         # message body is not cleartext
-        self.assertNotEquals(message.body, "")
-        self.assertNotEquals(message.body, msg_text)
-        self.assertEquals(message.to, [to[0]])
-        self.assertEquals(message.from_email, from_email)
-        self.assertEquals(message.alternatives, [])
-        self.assertNotEquals(message.attachments, [])
+        self.assertNotEqual(message.body, "")
+        self.assertNotEqual(message.body, msg_text)
+        self.assertEqual(message.to, [to[0]])
+        self.assertEqual(message.from_email, from_email)
+        self.assertEqual(message.alternatives, [])
+        self.assertNotEqual(message.attachments, [])
 
         self.assertIsNone(next(encrypted_messages, None))
 
@@ -387,22 +387,22 @@ class SendMailMixin(KeyMixin, SendMailFunctionMixin):
         imported_key = keys.key_map[TEST_KEY_FINGERPRINT]
         fp = imported_key['fingerprint']
 
-        self.assertEquals(fp, TEST_KEY_FINGERPRINT)
+        self.assertEqual(fp, TEST_KEY_FINGERPRINT)
 
         # Decrypt and test it against the cleartext
-        self.assertEquals(str(self.gpg.decrypt(message.body)),
+        self.assertEqual(str(self.gpg.decrypt(message.body)),
                           msg_text)
 
         # We should only have one attachment - the HTML message
-        self.assertEquals(len(message.attachments), 1)
+        self.assertEqual(len(message.attachments), 1)
 
         # Check the mimetype, then decrypt the contents and compare it to the
         # cleartext
         filename, content, mimetype = message.attachments[0]
-        self.assertEquals(
+        self.assertEqual(
             filename, 'file.txt{}'.format('.asc' if self.use_asc else ''))
-        self.assertEquals(mimetype, "application/gpg-encrypted")
-        self.assertEquals(str(self.gpg.decrypt(content)), msg_html)
+        self.assertEqual(mimetype, "application/gpg-encrypted")
+        self.assertEqual(str(self.gpg.decrypt(content)), msg_html)
 
         # Clean up the private key we imported here, leave the public key to be
         # cleaned up by tearDownClass
@@ -410,7 +410,7 @@ class SendMailMixin(KeyMixin, SendMailFunctionMixin):
             TEST_KEY_FINGERPRINT, secret=True,
             passphrase=SIGNING_KEY_PASSPHRASE)
 
-        self.assertEquals(str(delete_result), 'ok')
+        self.assertEqual(str(delete_result), 'ok')
 
     def test_send_mail_function_html_message(self):
         self.maxDiff = 10000
@@ -426,17 +426,17 @@ class SendMailMixin(KeyMixin, SendMailFunctionMixin):
 
         message = mail.outbox[0]
 
-        self.assertEquals(message.subject, msg_subject)
+        self.assertEqual(message.subject, msg_subject)
         # We decrypt and test the message body below, these just ensure the
         # message body is not cleartext so we fail quickly
-        self.assertNotEquals(message.body, "")
-        self.assertNotEquals(message.body, msg_text)
-        self.assertEquals(message.to, to)
-        self.assertEquals(message.from_email, from_email)
+        self.assertNotEqual(message.body, "")
+        self.assertNotEqual(message.body, msg_text)
+        self.assertEqual(message.to, to)
+        self.assertEqual(message.from_email, from_email)
         # Decrypt and test the alternatives later, just ensure we have
         # any alternatives at all so we fail quickly
-        self.assertNotEquals(message.alternatives, [])
-        self.assertEquals(message.attachments, [])
+        self.assertNotEqual(message.alternatives, [])
+        self.assertEqual(message.attachments, [])
 
         # Import the private key so we can decrypt the message body to test it
         import_result = self.gpg.import_keys(TEST_PRIVATE_KEY)
@@ -448,19 +448,19 @@ class SendMailMixin(KeyMixin, SendMailFunctionMixin):
         imported_key = keys.key_map[TEST_KEY_FINGERPRINT]
         fp = imported_key['fingerprint']
 
-        self.assertEquals(fp, TEST_KEY_FINGERPRINT)
+        self.assertEqual(fp, TEST_KEY_FINGERPRINT)
 
         # Decrypt and test the message body against the cleartext
-        self.assertEquals(str(self.gpg.decrypt(message.body)), msg_text)
+        self.assertEqual(str(self.gpg.decrypt(message.body)), msg_text)
 
         # We should only have one alternative - the HTML message
-        self.assertEquals(len(message.alternatives), 1)
+        self.assertEqual(len(message.alternatives), 1)
 
         # Check the mimetype, then decrypt the contents and compare it to the
         # cleartext
         alt, mimetype = message.alternatives[0]
-        self.assertEquals(mimetype, "application/gpg-encrypted")
-        self.assertEquals(str(self.gpg.decrypt(alt)), msg_html)
+        self.assertEqual(mimetype, "application/gpg-encrypted")
+        self.assertEqual(str(self.gpg.decrypt(alt)), msg_html)
 
         # Clean up the private key we imported here, leave the public key to be
         # cleaned up by tearDownClass
@@ -468,7 +468,7 @@ class SendMailMixin(KeyMixin, SendMailFunctionMixin):
             TEST_KEY_FINGERPRINT, secret=True,
             passphrase=SIGNING_KEY_PASSPHRASE)
 
-        self.assertEquals(str(delete_result), 'ok')
+        self.assertEqual(str(delete_result), 'ok')
 
     def test_send_mail_function_html_message_attachment(self):
         self.maxDiff = 10000
@@ -484,17 +484,17 @@ class SendMailMixin(KeyMixin, SendMailFunctionMixin):
 
         message = mail.outbox[0]
 
-        self.assertEquals(message.subject, msg_subject)
+        self.assertEqual(message.subject, msg_subject)
         # We decrypt and test the message body below, these just ensure the
         # message body is not cleartext so we fail quickly
-        self.assertNotEquals(message.body, "")
-        self.assertNotEquals(message.body, msg_text)
-        self.assertEquals(message.to, to)
-        self.assertEquals(message.from_email, from_email)
+        self.assertNotEqual(message.body, "")
+        self.assertNotEqual(message.body, msg_text)
+        self.assertEqual(message.to, to)
+        self.assertEqual(message.from_email, from_email)
         # Decrypt and test the alternatives later, just ensure we have
         # any alternatives at all so we fail quickly
-        self.assertEquals(message.alternatives, [])
-        self.assertNotEquals(message.attachments, [])
+        self.assertEqual(message.alternatives, [])
+        self.assertNotEqual(message.attachments, [])
 
         # Import the private key so we can decrypt the message body to test it
         import_result = self.gpg.import_keys(TEST_PRIVATE_KEY)
@@ -506,20 +506,20 @@ class SendMailMixin(KeyMixin, SendMailFunctionMixin):
         imported_key = keys.key_map[TEST_KEY_FINGERPRINT]
         fp = imported_key['fingerprint']
 
-        self.assertEquals(fp, TEST_KEY_FINGERPRINT)
+        self.assertEqual(fp, TEST_KEY_FINGERPRINT)
 
         # Decrypt and test the message body against the cleartext
-        self.assertEquals(str(self.gpg.decrypt(message.body)), msg_text)
+        self.assertEqual(str(self.gpg.decrypt(message.body)), msg_text)
 
         # We should only have one attachment - the HTML message
-        self.assertEquals(len(message.attachments), 1)
+        self.assertEqual(len(message.attachments), 1)
 
         # Check the mimetype, then decrypt the contents and compare it to the
         # cleartext
         filename, content, mimetype = message.attachments[0]
-        self.assertEquals(filename, None)
-        self.assertEquals(mimetype, "application/gpg-encrypted")
-        self.assertEquals(str(self.gpg.decrypt(content)), msg_html)
+        self.assertEqual(filename, None)
+        self.assertEqual(mimetype, "application/gpg-encrypted")
+        self.assertEqual(str(self.gpg.decrypt(content)), msg_html)
 
         # Clean up the private key we imported here, leave the public key to be
         # cleaned up by tearDownClass
@@ -527,7 +527,7 @@ class SendMailMixin(KeyMixin, SendMailFunctionMixin):
             TEST_KEY_FINGERPRINT, secret=True,
             passphrase=SIGNING_KEY_PASSPHRASE)
 
-        self.assertEquals(str(delete_result), 'ok')
+        self.assertEqual(str(delete_result), 'ok')
 
     def test_send_mail_function_html_message_attachment_from_filename(self):
         self.maxDiff = 10000
@@ -543,17 +543,17 @@ class SendMailMixin(KeyMixin, SendMailFunctionMixin):
 
         message = mail.outbox[0]
 
-        self.assertEquals(message.subject, msg_subject)
+        self.assertEqual(message.subject, msg_subject)
         # We decrypt and test the message body below, these just ensure the
         # message body is not cleartext so we fail quickly
-        self.assertNotEquals(message.body, "")
-        self.assertNotEquals(message.body, msg_text)
-        self.assertEquals(message.to, to)
-        self.assertEquals(message.from_email, from_email)
+        self.assertNotEqual(message.body, "")
+        self.assertNotEqual(message.body, msg_text)
+        self.assertEqual(message.to, to)
+        self.assertEqual(message.from_email, from_email)
         # Decrypt and test the alternatives later, just ensure we have
         # any alternatives at all so we fail quickly
-        self.assertEquals(message.alternatives, [])
-        self.assertNotEquals(message.attachments, [])
+        self.assertEqual(message.alternatives, [])
+        self.assertNotEqual(message.attachments, [])
 
         # Import the private key so we can decrypt the message body to test it
         import_result = self.gpg.import_keys(TEST_PRIVATE_KEY)
@@ -565,21 +565,21 @@ class SendMailMixin(KeyMixin, SendMailFunctionMixin):
         imported_key = keys.key_map[TEST_KEY_FINGERPRINT]
         fp = imported_key['fingerprint']
 
-        self.assertEquals(fp, TEST_KEY_FINGERPRINT)
+        self.assertEqual(fp, TEST_KEY_FINGERPRINT)
 
         # Decrypt and test the message body against the cleartext
-        self.assertEquals(str(self.gpg.decrypt(message.body)), msg_text)
+        self.assertEqual(str(self.gpg.decrypt(message.body)), msg_text)
 
         # We should only have one attachment - the HTML message
-        self.assertEquals(len(message.attachments), 1)
+        self.assertEqual(len(message.attachments), 1)
 
         # Check the mimetype, then decrypt the contents and compare it to the
         # cleartext
         filename, content, mimetype = message.attachments[0]
-        self.assertEquals(
+        self.assertEqual(
             filename, 'file.txt{}'.format('.asc' if self.use_asc else ''))
-        self.assertEquals(mimetype, "application/gpg-encrypted")
-        self.assertEquals(str(self.gpg.decrypt(content)), msg_html)
+        self.assertEqual(mimetype, "application/gpg-encrypted")
+        self.assertEqual(str(self.gpg.decrypt(content)), msg_html)
 
         # Clean up the private key we imported here, leave the public key to be
         # cleaned up by tearDownClass
@@ -587,7 +587,7 @@ class SendMailMixin(KeyMixin, SendMailFunctionMixin):
             TEST_KEY_FINGERPRINT, secret=True,
             passphrase=SIGNING_KEY_PASSPHRASE)
 
-        self.assertEquals(str(delete_result), 'ok')
+        self.assertEqual(str(delete_result), 'ok')
 
     def test_send_mail_function_html_message_encrypted_attachment(self):
         self.maxDiff = 10000
@@ -604,13 +604,13 @@ class SendMailMixin(KeyMixin, SendMailFunctionMixin):
         message = mail.outbox[0]
 
         # We should only have one attachment - the HTML message
-        self.assertEquals(len(message.attachments), 1)
+        self.assertEqual(len(message.attachments), 1)
 
         # Check the content to make sure it wasn't encrypted
         filename, content, mimetype = message.attachments[0]
-        self.assertEquals(filename, None)
-        self.assertEquals(mimetype, "application/gpg-encrypted")
-        self.assertEquals(content, msg_html)
+        self.assertEqual(filename, None)
+        self.assertEqual(mimetype, "application/gpg-encrypted")
+        self.assertEqual(content, msg_html)
 
     def test_send_mail_function_html_message_attachment_from_mime(self):
         self.maxDiff = 10000
@@ -630,17 +630,17 @@ class SendMailMixin(KeyMixin, SendMailFunctionMixin):
 
         message = mail.outbox[0]
 
-        self.assertEquals(message.subject, msg_subject)
+        self.assertEqual(message.subject, msg_subject)
         # We decrypt and test the message body below, these just ensure the
         # message body is not cleartext so we fail quickly
-        self.assertNotEquals(message.body, "")
-        self.assertNotEquals(message.body, msg_text)
-        self.assertEquals(message.to, to)
-        self.assertEquals(message.from_email, from_email)
+        self.assertNotEqual(message.body, "")
+        self.assertNotEqual(message.body, msg_text)
+        self.assertEqual(message.to, to)
+        self.assertEqual(message.from_email, from_email)
         # Decrypt and test the alternatives later, just ensure we have
         # any alternatives at all so we fail quickly
-        self.assertEquals(message.alternatives, [])
-        self.assertNotEquals(message.attachments, [])
+        self.assertEqual(message.alternatives, [])
+        self.assertNotEqual(message.attachments, [])
 
         # Import the private key so we can decrypt the message body to test it
         import_result = self.gpg.import_keys(TEST_PRIVATE_KEY)
@@ -652,24 +652,24 @@ class SendMailMixin(KeyMixin, SendMailFunctionMixin):
         imported_key = keys.key_map[TEST_KEY_FINGERPRINT]
         fp = imported_key['fingerprint']
 
-        self.assertEquals(fp, TEST_KEY_FINGERPRINT)
+        self.assertEqual(fp, TEST_KEY_FINGERPRINT)
 
         # Decrypt and test the message body against the cleartext
-        self.assertEquals(str(self.gpg.decrypt(message.body)), msg_text)
+        self.assertEqual(str(self.gpg.decrypt(message.body)), msg_text)
 
         # We should only have one attachment - the HTML message
-        self.assertEquals(len(message.attachments), 1)
+        self.assertEqual(len(message.attachments), 1)
 
         # Check the mimetype, then decrypt the contents and compare it to the
         # cleartext
         filename, content, mimetype = message.attachments[0]
-        self.assertEquals(
+        self.assertEqual(
             filename, '{}{}'.format(
                 basename(attachment_filename),
                 '.asc' if self.use_asc else ''))
-        self.assertEquals(mimetype, "application/gpg-encrypted")
+        self.assertEqual(mimetype, "application/gpg-encrypted")
         with open(attachment_filename, 'r') as f:
-            self.assertEquals(str(self.gpg.decrypt(content)), f.read())
+            self.assertEqual(str(self.gpg.decrypt(content)), f.read())
 
         # Clean up the private key we imported here, leave the public key to be
         # cleaned up by tearDownClass
@@ -677,4 +677,4 @@ class SendMailMixin(KeyMixin, SendMailFunctionMixin):
             TEST_KEY_FINGERPRINT, secret=True,
             passphrase=SIGNING_KEY_PASSPHRASE)
 
-        self.assertEquals(str(delete_result), 'ok')
+        self.assertEqual(str(delete_result), 'ok')

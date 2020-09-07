@@ -5,7 +5,7 @@ from django.core.mail.backends.locmem import EmailBackend as LocmemBackend
 from django.core.mail.backends.filebased import EmailBackend as FileBackend
 from django.core.mail.backends.smtp import EmailBackend as SmtpBackend
 from django.core.mail.message import EmailMultiAlternatives
-from django.utils.encoding import smart_text
+from django.utils.encoding import smart_str
 
 from .handlers import (handle_failed_message_encryption,
                        handle_failed_alternative_encryption,
@@ -37,11 +37,11 @@ def copy_message(msg):
 
 def encrypt(text, addr):
     encryption_result = gpg.encrypt(text, addr, **encrypt_kwargs)
-    if not encryption_result.ok or (smart_text(encryption_result) == ""
+    if not encryption_result.ok or (smart_str(encryption_result) == ""
                                     and text != ""):
         raise EncryptionFailedError("Encrypting mail to %s failed: '%s'",
                                     addr, encryption_result.status)
-    return smart_text(encryption_result)
+    return smart_str(encryption_result)
 
 
 def encrypt_attachment(address, attachment, use_asc):
